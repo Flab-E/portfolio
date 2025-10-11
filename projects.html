@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects - Abhay Bhat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-dark': '#1a1a1a',
+                        'primary-light': '#f8f8f8',
+                        'accent-teal': '#14b8a6',
+                        'accent-teal-dark': '#0f766e',
+                        'grey-800': '#2d2d2d',
+                        'grey-600': '#4a4a4a',
+                        'grey-400': '#9ca3af'
+                    },
+                    fontFamily: {
+                        'display': ['Georgia', 'serif'],
+                        'body': ['Inter', 'sans-serif'],
+                        'mono': ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        .project-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-8px) rotateX(2deg);
+            box-shadow: 0 25px 50px -12px rgba(20, 184, 166, 0.25);
+        }
+        
+        .filter-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn.active {
+            background: #14b8a6;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+        
+        .scroll-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #14b8a6;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: #2d2d2d;
+            border-radius: 1rem;
+            max-width: 4xl;
+            max-height: 90vh;
+            overflow-y: auto;
+            margin: 2rem;
+            animation: modalSlideIn 0.3s ease;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+    </style>
+</head>
+<body class="bg-primary-dark text-primary-light font-body">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-primary-dark/90 backdrop-blur-md border-b border-grey-800">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="font-display text-xl font-bold text-accent-teal">
+                    <a href="index.html">Abhay Bhat</a>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="nav-link text-primary-light hover:text-accent-teal">Home</a>
+                    <a href="about.html" class="nav-link text-primary-light hover:text-accent-teal">About</a>
+                    <a href="projects.html" class="nav-link text-accent-teal">Projects</a>
+                    <a href="contact.html" class="nav-link text-primary-light hover:text-accent-teal">Contact</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 bg-gradient-to-br from-primary-dark to-grey-800">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center scroll-reveal">
+                <h1 class="font-display text-5xl lg:text-6xl font-bold mb-6">
+                    My <span class="text-accent-teal">Projects</span>
+                </h1>
+                <p class="text-xl text-grey-400 max-w-3xl mx-auto leading-relaxed">
+                    A comprehensive showcase of cybersecurity projects spanning malware analysis, 
+                    threat intelligence, security automation, and CTF competitions. Each project 
+                    demonstrates practical application of advanced security concepts and tools.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Project Filters -->
+    <section class="py-12 bg-primary-dark">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-wrap justify-center gap-4 scroll-reveal">
+                <button class="filter-btn active bg-grey-800 hover:bg-accent-teal text-primary-light px-6 py-3 rounded-full font-semibold" data-filter="all">
+                    All Projects
+                </button>
+                <button class="filter-btn bg-grey-800 hover:bg-accent-teal text-primary-light px-6 py-3 rounded-full font-semibold" data-filter="malware">
+                    Malware Analysis
+                </button>
+                <button class="filter-btn bg-grey-800 hover:bg-accent-teal text-primary-light px-6 py-3 rounded-full font-semibold" data-filter="threat-intel">
+                    Threat Intelligence
+                </button>
+                <button class="filter-btn bg-grey-800 hover:bg-accent-teal text-primary-light px-6 py-3 rounded-full font-semibold" data-filter="automation">
+                    Security Automation
+                </button>
+                <button class="filter-btn bg-grey-800 hover:bg-accent-teal text-primary-light px-6 py-3 rounded-full font-semibold" data-filter="ctf">
+                    CTF & Education
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Grid -->
+    <section class="py-20 bg-grey-800">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- RootAnalysis Disk Forensics -->
+                <div class="project-card bg-primary-dark rounded-xl overflow-hidden scroll-reveal" data-categories="malware,automation" data-project="rootanalysis">
+                    <div class="h-48 bg-gradient-to-br from-accent-teal/20 to-accent-teal-dark/20 flex items-center justify-center">
+                        <div class="text-6xl">🔍</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">RootAnalysis Disk Forensics Tool</h3>
+                        <p class="text-grey-400 mb-4">C-based disk parser for forensic analysis with structured root directory listing and metadata extraction from raw disk images.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">C</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">Forensics</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">Disk Analysis</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-grey-400">2024 • Arizona State University</span>
+                            <button class="text-accent-teal hover:text-accent-teal-dark font-semibold" onclick="openProjectModal('rootanalysis')">
+                                View Details →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RISC Container Generator -->
+                <div class="project-card bg-primary-dark rounded-xl overflow-hidden scroll-reveal" data-categories="automation,ctf" data-project="risc">
+                    <div class="h-48 bg-gradient-to-br from-accent-teal/20 to-accent-teal-dark/20 flex items-center justify-center">
+                        <div class="text-6xl">🐳</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">RISC Container Generator</h3>
+                        <p class="text-grey-400 mb-4">Scalable platform with Dockerized cybersecurity challenges serving 500+ students with isolated lab environments in the cloud.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">Docker</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">Cloud</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">Education</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-grey-400">2023 • PES University</span>
+                            <button class="text-accent-teal hover:text-accent-teal-dark font-semibold" onclick="openProjectModal('risc')">
+                                View Details →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NetWalker Malware Analysis -->
+                <div class="project-card bg-primary-dark rounded-xl overflow-hidden scroll-reveal" data-categories="malware" data-project="netwalker">
+                    <div class="h-48 bg-gradient-to-br from-accent-teal/20 to-accent-teal-dark/20 flex items-center justify-center">
+                        <div class="text-6xl">🦠</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">NetWalker Malware Case Study</h3>
+                        <p class="text-grey-400 mb-4">Comprehensive static analysis of NetWalker ransomware using Ghidra and IDA Pro with detailed behavior mapping and process tracing.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">Malware Analysis</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">Reverse Engineering</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">Ghidra</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-grey-400">2023 • PES University</span>
+                            <button class="text-accent-teal hover:text-accent-teal-dark font-semibold" onclick="openProjectModal('netwalker')">
+                                View Details →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OpenCTI Connector -->
+                <div class="project-card bg-primary-dark rounded-xl overflow-hidden scroll-reveal" data-categories="threat-intel,automation" data-project="opencti">
+                    <div class="h-48 bg-gradient-to-br from-accent-teal/20 to-accent-teal-dark/20 flex items-center justify-center">
+                        <div class="text-6xl">🔗</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">OpenCTI Threat Intelligence Connector</h3>
+                        <p class="text-grey-400 mb-4">Automated IOC enrichment connector processing 500+ Twitter-sourced IOCs daily with integration of multiple threat intelligence sources.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">Python</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">STIX 2.1</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">OpenCTI</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-grey-400">2025 • CloudSEK</span>
+                            <button class="text-accent-teal hover:text-accent-teal-dark font-semibold" onclick="openProjectModal('opencti')">
+                                View Details →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Router Vulnerability Triage -->
+                <div class="project-card bg-primary-dark rounded-xl overflow-hidden scroll-reveal" data-categories="automation,threat-intel" data-project="router-vuln">
+                    <div class="h-48 bg-gradient-to-br from-accent-teal/20 to-accent-teal-dark/20 flex items-center justify-center">
+                        <div class="text-6xl">🔧</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Router Vulnerability Triage System</h3>
+                        <p class="text-grey-400 mb-4">Automated vulnerability analysis system with 20+ Python scripts reducing analysis time by 40% through CVE/CWE data collection.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">Python</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">Angr</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">Automation</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-grey-400">2023-2025 • SEFCOM, ASU</span>
+                            <button class="text-accent-teal hover:text-accent-teal-dark font-semibold" onclick="openProjectModal('router-vuln')">
+                                View Details →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CTF Competition Platform -->
+                <div class="project-card bg-primary-dark rounded-xl overflow-hidden scroll-reveal" data-categories="ctf,education" data-project="ctf-platform">
+                    <div class="h-48 bg-gradient-to-br from-accent-teal/20 to-accent-teal-dark/20 flex items-center justify-center">
+                        <div class="text-6xl">🏆</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">CTF Competition Management</h3>
+                        <p class="text-grey-400 mb-4">Led ISFCR CTF team to All-India Rank 8 and Global Rank 193, organizing 5 workshops and inter-collegiate competitions.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">CTF</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">Leadership</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">Education</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-grey-400">2021-2023 • ISFCR, PES University</span>
+                            <button class="text-accent-teal hover:text-accent-teal-dark font-semibold" onclick="openProjectModal('ctf-platform')">
+                                View Details →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Project Modals -->
+    <div id="project-modal" class="modal">
+        <div class="modal-content w-full max-w-4xl">
+            <div class="p-8">
+                <div class="flex justify-between items-start mb-6">
+                    <h2 id="modal-title" class="font-display text-3xl font-bold"></h2>
+                    <button onclick="closeProjectModal()" class="text-grey-400 hover:text-primary-light text-2xl">×</button>
+                </div>
+                <div id="modal-content">
+                    <!-- Content will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-primary-dark border-t border-grey-800 py-12">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center">
+                <div class="font-display text-2xl font-bold text-accent-teal mb-4">Abhay Bhat</div>
+                <p class="text-grey-400 mb-6">Cybersecurity Professional & Threat Researcher</p>
+                <div class="flex justify-center space-x-6 mb-8">
+                    <a href="mailto:abhaybhat0312@gmail.com" class="text-grey-400 hover:text-accent-teal transition-colors">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                        </svg>
+                    </a>
+                    <a href="https://linkedin.com/in/abhay-bhat-893b211b7" class="text-grey-400 hover:text-accent-teal transition-colors">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                        </svg>
+                    </a>
+                </div>
+                <p class="text-sm text-grey-600">© 2025 Abhay Bhat. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+    <script>
+        // Project data
+        const projectData = {
+            rootanalysis: {
+                title: "RootAnalysis Disk Forensics Tool",
+                category: "Malware Analysis & Digital Forensics",
+                timeline: "2024 • Arizona State University",
+                description: "A comprehensive C-based disk parser designed for forensic analysis of raw disk images. This tool extracts partition schemes, file system metadata, and geometry information while providing structured root directory listing with verbose and log-mode outputs.",
+                achievements: [
+                    "Engineered robust disk parser for multiple file system formats",
+                    "Enhanced forensic investigation efficiency through structured data extraction",
+                    "Implemented verbose and log-mode outputs for detailed analysis",
+                    "Supported various partition schemes and disk geometries"
+                ],
+                technicalDetails: "The tool leverages low-level disk I/O operations to parse raw disk images, extracting critical forensic information including partition tables, file system metadata, and directory structures. It implements error handling for corrupted sectors and provides detailed logging capabilities.",
+                technologies: ["C", "Linux System Calls", "File System Analysis", "Disk I/O Operations", "Forensic Techniques"],
+                impact: "Significantly improved forensic analysis workflow by automating disk image parsing and providing structured output for further investigation."
+            },
+            risc: {
+                title: "RISC Container Generator",
+                category: "Security Education & Containerization",
+                timeline: "2023 • PES University",
+                description: "A scalable platform that deploys Dockerized cybersecurity challenges in cloud environments, providing isolated lab environments for over 500 students. The platform integrates multiple open-source tools and hosts 16+ SEED Labs scenarios.",
+                achievements: [
+                    "Deployed scalable cybersecurity challenge platform in cloud",
+                    "Served 500+ students with isolated lab environments",
+                    "Integrated 5 open-source security tools",
+                    "Hosted 16+ SEED Labs scenarios for hands-on learning"
+                ],
+                technicalDetails: "Built using Docker containerization technology with cloud deployment capabilities. The platform includes automated challenge deployment, user isolation, progress tracking, and integration with educational security tools for comprehensive learning experiences.",
+                technologies: ["Docker", "Cloud Platforms", "Node.js", "MongoDB", "SEED Labs", "Educational Tools"],
+                impact: "Revolutionized cybersecurity education by providing scalable, hands-on learning environments accessible to hundreds of students simultaneously."
+            },
+            netwalker: {
+                title: "NetWalker Malware Case Study",
+                category: "Advanced Malware Analysis",
+                timeline: "2023 • PES University",
+                description: "An in-depth static analysis of the notorious NetWalker ransomware, conducted using industry-standard tools like Ghidra and IDA Pro. The study uncovered infection vectors, payload techniques, and mapped detailed malware behavior through process injection tracing.",
+                achievements: [
+                    "Uncovered NetWalker ransomware infection vectors",
+                    "Analyzed payload techniques through static analysis",
+                    "Mapped malware behavior via process injection tracing",
+                    "Documented network interaction patterns and C2 communication"
+                ],
+                technicalDetails: "Utilized advanced reverse engineering techniques with Ghidra and IDA Pro to dissect the ransomware's encryption algorithms, persistence mechanisms, and network communication protocols. The analysis included dynamic behavior monitoring and network traffic analysis.",
+                technologies: ["Ghidra", "IDA Pro", "x64dbg", "Wireshark", "Process Monitoring", "Network Analysis"],
+                impact: "Provided valuable insights into ransomware tactics and contributed to the cybersecurity community's understanding of NetWalker operations."
+            },
+            opencti: {
+                title: "OpenCTI Threat Intelligence Connector",
+                category: "Threat Intelligence & Automation",
+                timeline: "2025 • CloudSEK",
+                description: "An automated IOC enrichment connector for OpenCTI platform that processes over 500 Twitter-sourced IOCs daily. The system integrates multiple threat intelligence sources including AlienVault, VirusTotal, and AbuseIPDB for comprehensive threat enrichment.",
+                achievements: [
+                    "Process 500+ Twitter-sourced IOCs daily",
+                    "Integrated AlienVault, VirusTotal, and AbuseIPDB",
+                    "Automated threat feed ingestion from multiple sources",
+                    "Improved threat intelligence processing efficiency by 40%"
+                ],
+                technicalDetails: "Built using Python with STIX 2.1 and TAXII protocols for standardized threat intelligence sharing. The system includes robust error handling, rate limiting, and scalable architecture for handling high-volume IOC processing.",
+                technologies: ["Python", "STIX 2.1", "TAXII", "OpenCTI", "RabbitMQ", "MongoDB", "API Integration"],
+                impact: "Significantly enhanced threat intelligence capabilities by automating IOC enrichment and providing actionable intelligence to security teams."
+            },
+            "router-vuln": {
+                title: "Router Vulnerability Triage System",
+                category: "Vulnerability Analysis & Automation",
+                timeline: "2023-2025 • SEFCOM, Arizona State University",
+                description: "A comprehensive automated vulnerability analysis system consisting of 20+ Python scripts that accelerate router vulnerability triage. The system reduces analysis time by 40% through automated CVE/CWE data collection and alignment with firmware behaviors.",
+                achievements: [
+                    "Built 20+ Python scripts for vulnerability analysis",
+                    "Reduced analysis time by 40% through automation",
+                    "Improved exploit validation efficiency",
+                    "Automated CVE/CWE data collection and alignment"
+                ],
+                technicalDetails: "Utilizes binary analysis frameworks like Angr for firmware analysis, combined with automated CVE/CWE correlation. The system includes parallel processing capabilities and intelligent filtering for relevant vulnerabilities.",
+                technologies: ["Python", "Angr", "Binary Analysis", "CVE/CWE Databases", "Firmware Analysis", "Docker"],
+                impact: "Streamlined vulnerability research workflow and improved the efficiency of security assessment processes for embedded systems."
+            },
+            "ctf-platform": {
+                title: "CTF Competition Management & Leadership",
+                category: "Cybersecurity Competitions & Education",
+                timeline: "2021-2023 • ISFCR, PES University",
+                description: "Led the ISFCR CTF team to achieve All-India Rank 8 and Global Rank 193 on ctftime.org. Organized 5 workshops and inter-collegiate competitions, expanding cybersecurity awareness to over 500 students through strategic leadership and technical guidance.",
+                achievements: [
+                    "Achieved All-India Rank 8 and Global Rank 193 on ctftime.org",
+                    "Organized 5 cybersecurity workshops and competitions",
+                    "Expanded cybersecurity awareness to 500+ students",
+                    "Led strategy across reverse engineering, pwn, and forensics"
+                ],
+                technicalDetails: "Developed competition strategies across multiple cybersecurity domains including reverse engineering, binary exploitation, and digital forensics. Created training materials and mentored team members in advanced techniques.",
+                technologies: ["CTF Strategy", "Reverse Engineering", "Binary Exploitation", "Forensics", "Team Leadership", "Educational Development"],
+                impact: "Established the institution as a leading cybersecurity education hub and inspired hundreds of students to pursue careers in cybersecurity."
+            }
+        };
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeProjectFiltering();
+            
+            // Initialize scroll reveal
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('revealed');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.scroll-reveal').forEach(el => {
+                observer.observe(el);
+            });
+        });
+
+        // Project filtering functionality
+        function initializeProjectFiltering() {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const projectCards = document.querySelectorAll('.project-card');
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const filter = button.getAttribute('data-filter');
+                    
+                    // Update active button
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    // Filter projects
+                    projectCards.forEach(card => {
+                        const categories = card.getAttribute('data-categories').split(',');
+                        if (filter === 'all' || categories.includes(filter)) {
+                            card.style.display = 'block';
+                            anime({
+                                targets: card,
+                                opacity: [0, 1],
+                                translateY: [20, 0],
+                                duration: 500,
+                                easing: 'easeOutQuart'
+                            });
+                        } else {
+                            anime({
+                                targets: card,
+                                opacity: 0,
+                                translateY: -20,
+                                duration: 300,
+                                easing: 'easeInQuart',
+                                complete: () => {
+                                    card.style.display = 'none';
+                                }
+                            });
+                        }
+                    });
+                });
+            });
+        }
+
+        // Modal functionality
+        function openProjectModal(projectId) {
+            const project = projectData[projectId];
+            if (!project) return;
+            
+            const modal = document.getElementById('project-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalContent = document.getElementById('modal-content');
+            
+            modalTitle.textContent = project.title;
+            
+            modalContent.innerHTML = `
+                <div class="mb-6">
+                    <div class="flex flex-wrap gap-4 mb-4">
+                        <span class="bg-accent-teal/20 text-accent-teal px-4 py-2 rounded-full font-semibold">${project.category}</span>
+                        <span class="text-grey-400">${project.timeline}</span>
+                    </div>
+                    <p class="text-lg text-grey-300 leading-relaxed mb-6">${project.description}</p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div>
+                        <h3 class="text-xl font-bold mb-4 text-accent-teal">Key Achievements</h3>
+                        <ul class="space-y-2">
+                            ${project.achievements.map(achievement => `
+                                <li class="flex items-start">
+                                    <span class="text-accent-teal mr-2">•</span>
+                                    <span class="text-grey-300">${achievement}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-xl font-bold mb-4 text-accent-teal">Technical Details</h3>
+                        <p class="text-grey-300 leading-relaxed">${project.technicalDetails}</p>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="text-xl font-bold mb-4 text-accent-teal">Technologies Used</h3>
+                    <div class="flex flex-wrap gap-2">
+                        ${project.technologies.map(tech => `
+                            <span class="bg-grey-600 text-primary-light px-3 py-1 rounded-full text-sm">${tech}</span>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <div class="bg-grey-800 p-6 rounded-xl">
+                    <h3 class="text-xl font-bold mb-2 text-accent-teal">Project Impact</h3>
+                    <p class="text-grey-300">${project.impact}</p>
+                </div>
+            `;
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeProjectModal() {
+            const modal = document.getElementById('project-modal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal on outside click
+        document.getElementById('project-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeProjectModal();
+            }
+        });
+
+        // Close modal on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeProjectModal();
+            }
+        });
+    </script>
+</body>
+</html>

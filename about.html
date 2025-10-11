@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Abhay Bhat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.0/echarts.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-dark': '#1a1a1a',
+                        'primary-light': '#f8f8f8',
+                        'accent-teal': '#14b8a6',
+                        'accent-teal-dark': '#0f766e',
+                        'grey-800': '#2d2d2d',
+                        'grey-600': '#4a4a4a',
+                        'grey-400': '#9ca3af'
+                    },
+                    fontFamily: {
+                        'display': ['Georgia', 'serif'],
+                        'body': ['Inter', 'sans-serif'],
+                        'mono': ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        .skill-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        
+        .skill-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(20, 184, 166, 0.25);
+        }
+        
+        .skill-details {
+            /* Collapsed by default so it doesn't occupy space when hidden */
+            height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transform: translateY(10px);
+            padding-top: 0;
+            transition: none; /* animations handled by anime.js */
+        }
+        
+        .timeline-item {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .timeline-item:hover {
+            transform: translateX(8px);
+        }
+        
+        .timeline-item.active .timeline-marker {
+            background: #14b8a6;
+            box-shadow: 0 0 20px rgba(20, 184, 166, 0.5);
+        }
+        
+        .timeline-content {
+            /* Start collapsed; animations are handled by anime.js for smooth numeric height transitions */
+            height: 0;
+            opacity: 0;
+            overflow: hidden;
+            padding-top: 0;
+        }
+
+        .timeline-item.active .timeline-content {
+            /* When active, JS will set height to measured px value then to 'auto' after animation completes */
+            opacity: 1;
+            padding-top: 1rem;
+        }
+        
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+        
+        .scroll-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #14b8a6;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-primary-dark text-primary-light font-body">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-primary-dark/90 backdrop-blur-md border-b border-grey-800">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="font-display text-xl font-bold text-accent-teal">
+                    <a href="index.html">Abhay Bhat</a>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="nav-link text-primary-light hover:text-accent-teal">Home</a>
+                    <a href="about.html" class="nav-link text-accent-teal">About</a>
+                    <a href="projects.html" class="nav-link text-primary-light hover:text-accent-teal">Projects</a>
+                    <a href="contact.html" class="nav-link text-primary-light hover:text-accent-teal">Contact</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 bg-gradient-to-br from-primary-dark to-grey-800">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="scroll-reveal">
+                    <h1 class="font-display text-5xl lg:text-6xl font-bold mb-6">
+                        About <span class="text-accent-teal">Me</span>
+                    </h1>
+                    <p class="text-xl text-grey-400 leading-relaxed mb-8">
+                        A passionate cybersecurity professional with a proven track record in threat research, 
+                        malware analysis, and security automation. My journey spans from leading CTF teams 
+                        to national recognition to developing sophisticated security tools used by hundreds 
+                        of students and professionals.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <div class="bg-accent-teal/20 text-accent-teal px-4 py-2 rounded-full text-sm font-semibold">
+                            CompTIA Security+ Certified
+                        </div>
+                        <div class="bg-accent-teal/20 text-accent-teal px-4 py-2 rounded-full text-sm font-semibold">
+                            Threat Intelligence Expert
+                        </div>
+                        <div class="bg-accent-teal/20 text-accent-teal px-4 py-2 rounded-full text-sm font-semibold">
+                            Malware Analyst
+                        </div>
+                    </div>
+                </div>
+                <div class="scroll-reveal">
+                    <img src="resources/avatar.png" alt="Abhay Bhat" class="w-96 h-96 rounded-2xl object-cover mx-auto shadow-2xl">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Matrix -->
+    <section class="py-20 bg-primary-dark">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 scroll-reveal">
+                <h2 class="font-display text-4xl font-bold mb-4">Technical Skills Matrix</h2>
+                <p class="text-xl text-grey-400">Hover over skills to see detailed experience and proficiency</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Programming Languages -->
+                <div class="skill-card bg-grey-800 p-6 rounded-xl scroll-reveal">
+                    <div class="flex items-center mb-4">
+                        <div class="text-3xl mr-4">💻</div>
+                        <div>
+                            <h3 class="text-xl font-bold">Programming Languages</h3>
+                            <div class="w-full bg-grey-600 rounded-full h-2 mt-2">
+                                <div class="bg-accent-teal h-2 rounded-full" style="width: 80%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="skill-details">
+                        <p class="text-grey-400 mb-3">Strong working knowledge of Python, C, JavaScript, and Bash scripting for security automation and tool development. Currently building projects to gain deeper applied experience.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">Python</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">C</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">JavaScript</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">Bash</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Malware Analysis -->
+                <div class="skill-card bg-grey-800 p-6 rounded-xl scroll-reveal">
+                    <div class="flex items-center mb-4">
+                        <div class="text-3xl mr-4">🦠</div>
+                        <div>
+                            <h3 class="text-xl font-bold">Malware Analysis</h3>
+                            <div class="w-full bg-grey-600 rounded-full h-2 mt-2">
+                                <div class="bg-accent-teal h-2 rounded-full" style="width: 77%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="skill-details">
+                        <p class="text-grey-400 mb-3">Practical experience in static and dynamic malware analysis using industry tools and guided projects to deepen reverse-engineering skills.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">Ghidra</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">IDA Pro</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">Wireshark</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">x64dbg</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Threat Intelligence -->
+                <div class="skill-card bg-grey-800 p-6 rounded-xl scroll-reveal">
+                    <div class="flex items-center mb-4">
+                        <div class="text-3xl mr-4">🔍</div>
+                        <div>
+                            <h3 class="text-xl font-bold">Threat Intelligence</h3>
+                            <div class="w-full bg-grey-600 rounded-full h-2 mt-2">
+                                <div class="bg-accent-teal h-2 rounded-full" style="width: 80%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="skill-details">
+                        <p class="text-grey-400 mb-3">Hands-on experience with threat feed analysis, IOC processing, and working knowledge of STIX/TAXII standards. Actively learning threat intelligence workflows.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">STIX 2.1</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">TAXII</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">OpenCTI</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">MISP</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Automation -->
+                <div class="skill-card bg-grey-800 p-6 rounded-xl scroll-reveal">
+                    <div class="flex items-center mb-4">
+                        <div class="text-3xl mr-4">🤖</div>
+                        <div>
+                            <h3 class="text-xl font-bold">Security Automation</h3>
+                            <div class="w-full bg-grey-600 rounded-full h-2 mt-2">
+                                <div class="bg-accent-teal h-2 rounded-full" style="width: 84%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="skill-details">
+                        <p class="text-grey-400 mb-3">Built multiple automation scripts to streamline tasks and learn deployment practices; exploring further automation patterns and CI/CD integration.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">Python</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">Bash</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">Docker</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">CI/CD</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Web Security -->
+                <div class="skill-card bg-grey-800 p-6 rounded-xl scroll-reveal">
+                    <div class="flex items-center mb-4">
+                        <div class="text-3xl mr-4">🛡️</div>
+                        <div>
+                            <h3 class="text-xl font-bold">Web Security</h3>
+                            <div class="w-full bg-grey-600 rounded-full h-2 mt-2">
+                                <div class="bg-accent-teal h-2 rounded-full" style="width: 72%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="skill-details">
+                        <p class="text-grey-400 mb-3">Practical web application security testing and vulnerability assessment experience using automated and manual techniques.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">Burp Suite</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">OWASP ZAP</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">Nmap</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">Nessus</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cloud & Infrastructure -->
+                <div class="skill-card bg-grey-800 p-6 rounded-xl scroll-reveal">
+                    <div class="flex items-center mb-4">
+                        <div class="text-3xl mr-4">☁️</div>
+                        <div>
+                            <h3 class="text-xl font-bold">Cloud & Infrastructure</h3>
+                            <div class="w-full bg-grey-600 rounded-full h-2 mt-2">
+                                <div class="bg-accent-teal h-2 rounded-full" style="width: 67%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="skill-details">
+                        <p class="text-grey-400 mb-3">Familiarity with cloud platforms, containerization, and infrastructure tooling; actively learning scalable deployment patterns and IaC.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">Docker</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">Kubernetes</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">AWS</span>
+                            <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">Linux</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Timeline -->
+    <section class="py-20 bg-grey-800">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 scroll-reveal">
+                <h2 class="font-display text-4xl font-bold mb-4">Professional Journey</h2>
+                <p class="text-xl text-grey-400">Hover on timeline items to explore detailed experience</p>
+            </div>
+            
+            <div class="max-w-4xl mx-auto">
+                <!-- CloudSEK -->
+                <div class="timeline-item bg-primary-dark p-6 rounded-xl mb-6 scroll-reveal">
+                    <div class="flex items-start">
+                        <div class="timeline-marker w-4 h-4 bg-grey-600 rounded-full mt-2 mr-6 flex-shrink-0"></div>
+                        <div class="flex-1">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
+                                <h3 class="text-xl font-bold">Threat Researcher Intern</h3>
+                                <span class="text-accent-teal font-semibold">CloudSEK • Jul 2025</span>
+                            </div>
+                            <p class="text-grey-400 mb-2">Bangalore, Karnataka</p>
+                            <p class="text-sm text-grey-400 mb-4">Automated threat feed ingestion and developed OpenCTI connector for IOC enrichment</p>
+                            
+                            <div class="timeline-content">
+                                <div class="space-y-4">
+                                    <div>
+                                        <h4 class="font-semibold text-accent-teal mb-2">Key Achievements:</h4>
+                                        <ul class="space-y-2 text-grey-400">
+                                            <li>• Automated ingestion of threat feeds from dark web, social media, and news sources</li>
+                                            <li>• Developed OpenCTI connector enriching 500+ Twitter-sourced IOCs daily</li>
+                                            <li>• Integrated AlienVault, VirusTotal, and AbuseIPDB for comprehensive threat enrichment</li>
+                                            <li>• Improved threat intelligence processing efficiency by 40%</li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-accent-teal mb-2">Technologies:</h4>
+                                        <div class="flex flex-wrap gap-2">
+                                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">Python</span>
+                                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">RabbitMQ</span>
+                                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">MongoDB</span>
+                                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">STIX 2.1</span>
+                                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">TAXII</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEFCOM -->
+                <div class="timeline-item bg-primary-dark p-6 rounded-xl mb-6 scroll-reveal">
+                    <div class="flex items-start">
+                        <div class="timeline-marker w-4 h-4 bg-grey-600 rounded-full mt-2 mr-6 flex-shrink-0"></div>
+                        <div class="flex-1">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
+                                <h3 class="text-xl font-bold">Graduate Service Assistant</h3>
+                                <span class="text-accent-teal font-semibold">SEFCOM, Arizona State University • Nov 2023 - May 2025</span>
+                            </div>
+                            <p class="text-grey-400 mb-2">Tempe, AZ, USA</p>
+                            <p class="text-sm text-grey-400 mb-4">Accelerated router vulnerability triage and automated CVE/CWE data collection</p>
+                            
+                            <div class="timeline-content">
+                                <div class="space-y-4">
+                                    <div>
+                                        <h4 class="font-semibold text-accent-teal mb-2">Key Achievements:</h4>
+                                        <ul class="space-y-2 text-grey-400">
+                                            <li>• Built 20+ Python scripts for router vulnerability triage and analysis</li>
+                                            <li>• Reduced analysis time by 40% through automated CVE/CWE data collection</li>
+                                            <li>• Improved exploit validation efficiency for firmware research</li>
+                                            <li>• Aligned findings with target firmware behaviors for accurate assessment</li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-accent-teal mb-2">Technologies:</h4>
+                                        <div class="flex flex-wrap gap-2">
+                                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">Python</span>
+                                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">C</span>
+                                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">Angr</span>
+                                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">Docker</span>
+                                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">Linux</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Abhaya Secure -->
+                <div class="timeline-item bg-primary-dark p-6 rounded-xl mb-6 scroll-reveal">
+                    <div class="flex items-start">
+                        <div class="timeline-marker w-4 h-4 bg-grey-600 rounded-full mt-2 mr-6 flex-shrink-0"></div>
+                        <div class="flex-1">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
+                                <h3 class="text-xl font-bold">Startup Intern - Cybersecurity & Backend</h3>
+                                <span class="text-accent-teal font-semibold">Abhaya Secure • Sep 2021 - May 2023</span>
+                            </div>
+                            <p class="text-grey-400 mb-2">Bangalore, Karnataka</p>
+                            <p class="text-sm text-grey-400 mb-4">Developed automated testing scripts and optimized backend performance</p>
+                            
+                            <div class="timeline-content">
+                                <div class="space-y-4">
+                                    <div>
+                                        <h4 class="font-semibold text-accent-teal mb-2">Key Achievements:</h4>
+                                        <ul class="space-y-2 text-grey-400">
+                                            <li>• Developed 30+ automated testing scripts for web and network vulnerabilities</li>
+                                            <li>• Reduced manual audit effort by over 60% through automation</li>
+                                            <li>• Reduced API response latency by 50% through backend optimization</li>
+                                            <li>• Restructured backend services using NodeJS and MongoDB performance tuning</li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-accent-teal mb-2">Technologies:</h4>
+                                        <div class="flex flex-wrap gap-2">
+                                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">Python</span>
+                                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">Node.js</span>
+                                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">Express</span>
+                                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">MongoDB</span>
+                                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">Burp Suite</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ISFCR -->
+                <div class="timeline-item bg-primary-dark p-6 rounded-xl mb-6 scroll-reveal">
+                    <div class="flex items-start">
+                        <div class="timeline-marker w-4 h-4 bg-grey-600 rounded-full mt-2 mr-6 flex-shrink-0"></div>
+                        <div class="flex-1">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
+                                <h3 class="text-xl font-bold">Club Head & CTF Team Lead</h3>
+                                <span class="text-accent-teal font-semibold">ISFCR, PES University • Dec 2021 - Jun 2023</span>
+                            </div>
+                            <p class="text-grey-400 mb-2">Bangalore, India</p>
+                            <p class="text-sm text-grey-400 mb-4">Led team to All-India Rank 8 and expanded cybersecurity awareness to 500+ students</p>
+                            
+                            <div class="timeline-content">
+                                <div class="space-y-4">
+                                    <div>
+                                        <h4 class="font-semibold text-accent-teal mb-2">Key Achievements:</h4>
+                                        <ul class="space-y-2 text-grey-400">
+                                            <li>• Led team to All-India Rank 8 and Global Rank 193 on ctftime.org</li>
+                                            <li>• Guided strategy across reverse engineering, pwn, and forensics tracks</li>
+                                            <li>• Organized 5 workshops and inter-collegiate CTF competitions</li>
+                                            <li>• Expanded cybersecurity awareness to 500+ students</li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-accent-teal mb-2">Technologies:</h4>
+                                        <div class="flex flex-wrap gap-2">
+                                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">Ghidra</span>
+                                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">IDA Pro</span>
+                                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">pwntools</span>
+                                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">Linux</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Education & Certifications -->
+    <section class="py-20 bg-primary-dark">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 scroll-reveal">
+                <h2 class="font-display text-4xl font-bold mb-4">Education & Certifications</h2>
+                <p class="text-xl text-grey-400">Academic foundation and professional credentials</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Education -->
+                <div class="scroll-reveal">
+                    <h3 class="text-2xl font-bold mb-6 text-accent-teal">Education</h3>
+                    <div class="space-y-6">
+                        <div class="bg-grey-800 p-6 rounded-xl">
+                            <div class="flex justify-between items-start mb-3">
+                                <h4 class="text-xl font-bold">M.S. Computer Science (Cybersecurity)</h4>
+                                <span class="text-accent-teal font-semibold">2025</span>
+                            </div>
+                            <p class="text-grey-400 mb-2">Arizona State University</p>
+                            <p class="text-sm text-grey-400">Specialized in cybersecurity with focus on threat intelligence and malware analysis</p>
+                        </div>
+                        
+                        <div class="bg-grey-800 p-6 rounded-xl">
+                            <div class="flex justify-between items-start mb-3">
+                                <h4 class="text-xl font-bold">B.Tech Computer Science</h4>
+                                <span class="text-accent-teal font-semibold">2022</span>
+                            </div>
+                            <p class="text-grey-400 mb-2">PES University</p>
+                            <p class="text-sm text-grey-400">Strong foundation in computer science with cybersecurity specializations</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Certifications -->
+                <div class="scroll-reveal">
+                    <h3 class="text-2xl font-bold mb-6 text-accent-teal">Certifications</h3>
+                    <div class="space-y-6">
+                        <div class="bg-grey-800 p-6 rounded-xl">
+                            <div class="flex items-center mb-4">
+                                <div class="text-4xl mr-4">🛡️</div>
+                                <div>
+                                    <h4 class="text-xl font-bold">CompTIA Security+</h4>
+                                    <p class="text-grey-400">Certification Code: YH8CYPJSZFFQ193P</p>
+                                </div>
+                            </div>
+                            <p class="text-sm text-grey-400 mb-4">Industry-standard cybersecurity certification validating core security skills and knowledge</p>
+                            <a href="#" class="text-accent-teal hover:text-accent-teal-dark font-semibold text-sm">
+                                Verify Certificate →
+                            </a>
+                        </div>
+                        
+                        <div class="bg-grey-800 p-6 rounded-xl">
+                            <div class="flex items-center mb-4">
+                                <div class="text-4xl mr-4">🏆</div>
+                                <div>
+                                    <h4 class="text-xl font-bold">CTF Achievements</h4>
+                                    <p class="text-grey-400">All-India Rank 8, Global Rank 193</p>
+                                </div>
+                            </div>
+                            <p class="text-sm text-grey-400">Led ISFCR CTF team to national and international recognition on ctftime.org</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-primary-dark border-t border-grey-800 py-12">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center">
+                <div class="font-display text-2xl font-bold text-accent-teal mb-4">Abhay Bhat</div>
+                <p class="text-grey-400 mb-6">Cybersecurity Professional & Threat Researcher</p>
+                <div class="flex justify-center space-x-6 mb-8">
+                    <a href="mailto:abhaybhat0312@gmail.com" class="text-grey-400 hover:text-accent-teal transition-colors">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                        </svg>
+                    </a>
+                    <a href="https://linkedin.com/in/abhay-bhat-893b211b7" class="text-grey-400 hover:text-accent-teal transition-colors">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                        </svg>
+                    </a>
+                </div>
+                <p class="text-sm text-grey-600">© 2025 Abhay Bhat. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+    <script>
+        // Initialize timeline interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTimeline();
+            initializeSkillsMatrix();
+            
+            // Initialize scroll reveal
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('revealed');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.scroll-reveal').forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>
