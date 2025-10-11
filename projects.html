@@ -248,29 +248,7 @@
                             </button>
                         </div>
                     </div>
-                </div>
-
-                <!-- OpenCTI Connector -->
-                <div class="project-card bg-primary-dark rounded-xl overflow-hidden scroll-reveal" data-categories="threat-intel,automation" data-project="opencti">
-                    <div class="h-48 bg-gradient-to-br from-accent-teal/20 to-accent-teal-dark/20 flex items-center justify-center">
-                        <div class="text-6xl">🔗</div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-2">OpenCTI Threat Intelligence Connector</h3>
-                        <p class="text-grey-400 mb-4">Automated IOC enrichment connector processing 500+ Twitter-sourced IOCs daily with integration of multiple threat intelligence sources.</p>
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">Python</span>
-                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">STIX 2.1</span>
-                            <span class="bg-accent-teal/20 text-accent-teal px-3 py-1 rounded-full text-sm">OpenCTI</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm text-grey-400">2025 • CloudSEK</span>
-                            <button class="text-accent-teal hover:text-accent-teal-dark font-semibold" onclick="openProjectModal('opencti')">
-                                View Details →
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                </div>        
 
                 <!-- Router Vulnerability Triage -->
                 <div class="project-card bg-primary-dark rounded-xl overflow-hidden scroll-reveal" data-categories="automation,threat-intel" data-project="router-vuln">
@@ -407,21 +385,7 @@
                 technologies: ["Ghidra", "IDA Pro", "x64dbg", "Wireshark", "Process Monitoring", "Network Analysis"],
                 impact: "Provided valuable insights into ransomware tactics and contributed to the cybersecurity community's understanding of NetWalker operations."
             },
-            opencti: {
-                title: "OpenCTI Threat Intelligence Connector",
-                category: "Threat Intelligence & Automation",
-                timeline: "2025 • CloudSEK",
-                description: "An automated IOC enrichment connector for OpenCTI platform that processes over 500 Twitter-sourced IOCs daily. The system integrates multiple threat intelligence sources including AlienVault, VirusTotal, and AbuseIPDB for comprehensive threat enrichment.",
-                achievements: [
-                    "Process 500+ Twitter-sourced IOCs daily",
-                    "Integrated AlienVault, VirusTotal, and AbuseIPDB",
-                    "Automated threat feed ingestion from multiple sources",
-                    "Improved threat intelligence processing efficiency by 40%"
-                ],
-                technicalDetails: "Built using Python with STIX 2.1 and TAXII protocols for standardized threat intelligence sharing. The system includes robust error handling, rate limiting, and scalable architecture for handling high-volume IOC processing.",
-                technologies: ["Python", "STIX 2.1", "TAXII", "OpenCTI", "RabbitMQ", "MongoDB", "API Integration"],
-                impact: "Significantly enhanced threat intelligence capabilities by automating IOC enrichment and providing actionable intelligence to security teams."
-            },
+            
             "router-vuln": {
                 title: "Router Vulnerability Triage System",
                 category: "Vulnerability Analysis & Automation",
