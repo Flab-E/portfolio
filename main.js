@@ -87,12 +87,14 @@ function initializeFileViewer() {
         }
     }
 
-    // Wire file links
-    document.querySelectorAll('.directory-tree a.file-link').forEach(link => {
+    // Wire file links (anywhere on the page) that use the file-link class + data-file
+    document.querySelectorAll('a.file-link[data-file]').forEach(link => {
         link.addEventListener('click', (e) => {
             const file = link.getAttribute('data-file');
             if (file) {
+                // Prevent other global anchor handlers (like smooth-scroll) from intercepting
                 e.preventDefault();
+                e.stopImmediatePropagation();
                 loadFile(file);
             }
         });
