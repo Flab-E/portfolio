@@ -8,7 +8,166 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeMobileMenu();
     initializeSmoothScroll();
     initializeNetworkBackground();
+    // initialize skills interactions on pages that include skill cards
+    if (typeof initializeSkillsMatrix === 'function') {
+        initializeSkillsMatrix();
+    }
 });
+
+// --- File viewer for blog pages ---
+function initializeFileViewer() {
+    const viewer = document.getElementById('blog-viewer');
+    if (!viewer) return;
+
+    async function loadFile(filename, pushHistory = true) {
+        if (!filename) return;
+        try {
+            let resp = await fetch(filename);
+            if (!resp.ok) {
+                // Try fallback to filename + '.md' for files that may have been saved as markdown
+                if (!filename.toLowerCase().endsWith('.md')) {
+                    const alt = filename + '.md';
+                    resp = await fetch(alt);
+                    if (resp.ok) {
+                        filename = alt;
+                    }
+                }
+            }
+
+            if (!resp.ok) {
+                viewer.innerHTML = `<div class="blog-content bg-grey-800 p-8 rounded-xl"><p class="text-red-400">Failed to load ${filename}: ${resp.status} ${resp.statusText}</p></div>`;
+                return;
+            }
+
+            const ext = filename.split('.').pop().toLowerCase();
+            const text = await resp.text();
+
+            if (ext === 'md' || ext === 'markdown') {
+                // Preprocess wiki-style embeds and links before rendering
+                const preprocessed = preprocessWikiLinks(text);
+                // render markdown using marked (ensure marked is loaded)
+                const html = (typeof marked !== 'undefined') ? marked.parse(preprocessed) : `<pre>${escapeHtml(preprocessed)}</pre>`;
+                viewer.innerHTML = `<div class="blog-content bg-grey-800 p-8 rounded-xl">${html}</div>`;
+                // After rendering, wire internal hash links inside the rendered markdown
+                wireViewerAnchors();
+                // Highlight code blocks if Prism is available
+                if (typeof Prism !== 'undefined' && Prism.highlightAll) {
+                    Prism.highlightAll();
+                }
+            } else if (ext === 'txt' || ext === 'ps1' || ext === 'log') {
+                viewer.innerHTML = `<div class="blog-content bg-grey-800 p-8 rounded-xl"><pre>${escapeHtml(text)}</pre></div>`;
+            } else if (ext === 'html') {
+                // Parse fetched HTML and extract only the .blog-content element to avoid embedding the full page
+                try {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(text, 'text/html');
+                    const content = doc.querySelector('.blog-content');
+                    if (content) {
+                        // Keep outer wrapper styles consistent
+                        viewer.innerHTML = `<div class="blog-content bg-grey-800 p-8 rounded-xl">${content.innerHTML}</div>`;
+                        // Wire any anchors inside the extracted HTML
+                        wireViewerAnchors();
+                        if (typeof Prism !== 'undefined' && Prism.highlightAll) Prism.highlightAll();
+                    } else {
+                        // fallback: show full HTML inside a pre tag
+                        viewer.innerHTML = `<div class="blog-content bg-grey-800 p-8 rounded-xl"><pre>${escapeHtml(text)}</pre></div>`;
+                    }
+                } catch (e) {
+                    viewer.innerHTML = `<div class="blog-content bg-grey-800 p-8 rounded-xl"><pre>${escapeHtml(text)}</pre></div>`;
+                }
+            } else {
+                viewer.innerHTML = `<div class="blog-content bg-grey-800 p-8 rounded-xl"><pre>${escapeHtml(text)}</pre></div>`;
+            }
+
+            if (pushHistory) {
+                history.pushState({ file: filename }, '', `#${encodeURIComponent(filename)}`);
+            }
+        } catch (err) {
+            viewer.innerHTML = `<div class="blog-content bg-grey-800 p-8 rounded-xl"><p class="text-red-400">Error loading ${filename}: ${escapeHtml(err.message)}</p></div>`;
+        }
+    }
+
+    // Wire file links
+    document.querySelectorAll('.directory-tree a.file-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            const file = link.getAttribute('data-file');
+            if (file) {
+                e.preventDefault();
+                loadFile(file);
+            }
+        });
+    });
+
+    // Handle back/forward navigation
+    window.addEventListener('popstate', (e) => {
+        const state = e.state;
+        if (state && state.file) {
+            loadFile(state.file, false);
+        } else if (location.hash) {
+            const file = decodeURIComponent(location.hash.replace('#', ''));
+            if (file) loadFile(file, false);
+        } else {
+            // no state: reload original content (do nothing)
+        }
+    });
+
+    // On initial load, if there's a hash, try to load it
+    if (location.hash) {
+        const file = decodeURIComponent(location.hash.replace('#', ''));
+        if (file) loadFile(file, false);
+    }
+
+    function escapeHtml(s) {
+        return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    // Convert wiki-style ![[image.png]] and [[file.ext]] links into standard markdown and internal anchors
+    function preprocessWikiLinks(text) {
+        // Images: ![[...]] -> ![](assets/filename)
+        let out = text.replace(/!\[\[(.+?)\]\]/g, (m, p1) => {
+            let name = p1.trim();
+            // normalize spaces to underscores and lowercase
+            name = name.replace(/\s+/g, '_').toLowerCase();
+            // if it already has assets/, keep it; else prefix
+            if (!name.startsWith('assets/')) name = 'assets/' + name;
+            return `![](${name})`;
+        });
+
+        // Links: [[file.ext]] -> [file.ext](#file.ext(.md fallback added by loader))
+        out = out.replace(/\[\[(.+?)\]\]/g, (m, p1) => {
+            const target = p1.trim();
+            if (/\./.test(target)) {
+                let href = target;
+                if (!href.toLowerCase().endsWith('.md')) href = href + '.md';
+                return `[${target}](#${encodeURIComponent(href)})`;
+            }
+            // otherwise return plain text (likely a section title or tag)
+            return target;
+        });
+
+        return out;
+    }
+
+    // Wire anchors inside the viewer so they load files via the viewer instead of navigating the page
+    function wireViewerAnchors() {
+        const viewerEl = document.getElementById('blog-viewer');
+        if (!viewerEl) return;
+        viewerEl.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', (e) => {
+                const href = a.getAttribute('href');
+                if (!href) return;
+                const file = decodeURIComponent(href.replace('#', ''));
+                if (file) {
+                    e.preventDefault();
+                    loadFile(file);
+                }
+            });
+        });
+    }
+}
+
+// Initialize viewer after DOM is ready
+document.addEventListener('DOMContentLoaded', initializeFileViewer);
 
 // Typewriter effect for hero section
 function initializeAnimations() {
@@ -16,10 +175,10 @@ function initializeAnimations() {
     if (document.getElementById('typed-text')) {
         new Typed('#typed-text', {
             strings: [
-                'Exploring Threat Intelligence',
-                'Researching Malware',
-                'Building Security Tools',
-                'Automating Security'
+                'Threat Researcher',
+                'Malware Analyst', 
+                'Security Expert',
+                'Automation Specialist'
             ],
             typeSpeed: 80,
             backSpeed: 50,
@@ -246,98 +405,32 @@ function initializeProjectFiltering() {
 function initializeSkillsMatrix() {
     const skillCards = document.querySelectorAll('.skill-card');
     
-    // Detect touch devices; on touch we keep click-to-persist behavior, on pointer devices hover will open/close
-    const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
-
     skillCards.forEach(card => {
         card.addEventListener('mouseenter', () => {
             const details = card.querySelector('.skill-details');
-            if (details && !details.classList.contains('persist')) {
-                anime.remove(details);
-                // Ensure element is measurable: temporarily show and set height:auto to get scrollHeight
-                details.style.display = 'block';
-                details.style.height = 'auto';
-                const targetHeight = details.scrollHeight;
-                // Reset to 0 before animating
-                details.style.height = '0px';
-                    anime({
-                        targets: details,
-                        height: ['0px', targetHeight + 'px'],
-                        opacity: [0, 1],
-                        duration: 300,
-                        easing: 'easeOutQuart',
-                        begin: () => { details.style.overflow = 'hidden'; },
-                        complete: () => { details.style.height = 'auto'; details.style.overflow = ''; details.style.transform = ''; }
-                    });
+            if (details) {
+                anime({
+                    targets: details,
+                    opacity: [0, 1],
+                    translateY: [10, 0],
+                    duration: 300,
+                    easing: 'easeOutQuart'
+                });
             }
         });
         
         card.addEventListener('mouseleave', () => {
             const details = card.querySelector('.skill-details');
-            if (details && !details.classList.contains('persist')) {
-                anime.remove(details);
-                // Ensure element is measurable
-                if (window.getComputedStyle(details).display === 'none') {
-                    details.style.display = 'block';
-                    details.style.height = 'auto';
-                }
-                const currH = details.getBoundingClientRect().height || details.scrollHeight || 0;
-                    anime({
-                        targets: details,
-                        height: [currH + 'px', '0px'],
-                        opacity: [1, 0],
-                        duration: 250,
-                        easing: 'easeInQuart',
-                        begin: () => { details.style.overflow = 'hidden'; },
-                        complete: () => { details.style.height = '0'; details.style.overflow = 'hidden'; details.style.display = 'none'; }
-                    });
+            if (details) {
+                anime({
+                    targets: details,
+                    opacity: 0,
+                    translateY: 10,
+                    duration: 200,
+                    easing: 'easeInQuart'
+                });
             }
         });
-        
-        // Click-to-persist is only enabled on touch devices (useful for mobile)
-        if (isTouch) {
-            card.addEventListener('click', (e) => {
-                // Avoid triggering click from child interactive elements
-                if (e.target.closest('a') || e.target.closest('button')) return;
-                const details = card.querySelector('.skill-details');
-                if (!details) return;
-
-                // Determine current visibility by computed opacity
-                const visible = parseFloat(window.getComputedStyle(details).opacity) > 0.1 || details.classList.contains('persist');
-                anime.remove(details);
-                if (visible) {
-                    // turn off persistent mode and collapse
-                    details.classList.remove('persist');
-                    const currH = details.getBoundingClientRect().height || details.scrollHeight || 0;
-                    anime({
-                        targets: details,
-                        height: [currH + 'px', '0px'],
-                        opacity: [1, 0],
-                        duration: 250,
-                        easing: 'easeInQuart',
-                        begin: () => { details.style.overflow = 'hidden'; },
-                        complete: () => { details.style.height = '0'; details.style.overflow = 'hidden'; details.style.display = 'none'; }
-                    });
-                } else {
-                    // set persistent mode so touch doesn't hide it
-                    details.classList.add('persist');
-                    // Make measurable then animate
-                    details.style.display = 'block';
-                    details.style.height = 'auto';
-                    const targetHeight = details.scrollHeight;
-                    details.style.height = '0px';
-                    anime({
-                        targets: details,
-                        height: ['0px', targetHeight + 'px'],
-                        opacity: [0, 1],
-                        duration: 300,
-                        easing: 'easeOutQuart',
-                        begin: () => { details.style.overflow = 'hidden'; },
-                        complete: () => { details.style.height = 'auto'; details.style.overflow = ''; details.style.transform = ''; }
-                    });
-                }
-            });
-        }
     });
 }
 
@@ -414,124 +507,107 @@ function showFormMessage(message, type) {
 // Timeline interaction (for about page)
 function initializeTimeline() {
     const timelineItems = document.querySelectorAll('.timeline-item');
-    const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+    // Ensure each timeline content starts in a deterministic closed/open state.
+    timelineItems.forEach(item => {
+        const content = item.querySelector('.timeline-content');
+        if (!content) return;
+        if (item.classList.contains('active')) {
+            // If markup marked it active, keep it open
+            content.style.height = 'auto';
+            content.style.opacity = '1';
+        } else {
+            // Force closed state explicitly so measurements are predictable
+            content.style.height = '0px';
+            content.style.opacity = '0';
+        }
+    });
 
-    // Helper to close other items
-    function closeOtherItems(currentItem) {
-        timelineItems.forEach(otherItem => {
-            if (otherItem === currentItem) return;
-            const otherContent = otherItem.querySelector('.timeline-content');
-            if (!otherContent) return;
+    timelineItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const content = item.querySelector('.timeline-content');
+            if (!content) return;
+            const isActive = item.classList.contains('active');
 
-            const otherComputedHeight = parseFloat(window.getComputedStyle(otherContent).height) || 0;
-            const otherIsOpen = otherItem.classList.contains('active') || otherComputedHeight > 0;
-
-            if (otherIsOpen) {
-                otherItem.classList.remove('active');
+            // Close only other items that are explicitly marked active. This avoids
+            // using transient layout measurements (which can be non-zero) to decide
+            // whether to animate unrelated items.
+            timelineItems.forEach(otherItem => {
+                if (otherItem === item) return;
+                if (!otherItem.classList.contains('active')) return;
+                const otherContent = otherItem.querySelector('.timeline-content');
+                if (!otherContent) return;
+                // Measure an explicit pixel height and apply it so the animation
+                // starts from a concrete numeric value instead of 'auto'. This
+                // prevents short/snappy closes caused by inconsistent measurements.
+                const otherHeight = otherContent.scrollHeight || otherContent.offsetHeight || 0;
+                otherContent.style.height = otherHeight + 'px';
+                // force layout so the browser registers the explicit height
+                // before anime starts
+                /* eslint-disable no-unused-expressions */
+                otherContent.offsetHeight;
+                /* eslint-enable no-unused-expressions */
                 anime.remove(otherContent);
                 anime({
                     targets: otherContent,
-                    height: [otherContent.scrollHeight + 'px', '0px'],
+                    height: [otherHeight, 0],
                     opacity: [1, 0],
-                    duration: 300,
-                    easing: 'easeInQuart',
-                    begin: () => { otherContent.style.overflow = 'hidden'; },
-                    complete: () => { otherContent.style.height = '0'; otherContent.style.overflow = 'hidden'; }
-                });
-            } else {
-                otherItem.classList.remove('active');
-                otherContent.style.height = '0';
-                otherContent.style.overflow = 'hidden';
-                otherContent.style.opacity = 0;
-            }
-        });
-    }
-
-    timelineItems.forEach(item => {
-        const content = item.querySelector('.timeline-content');
-
-        if (isTouch) {
-            // Tap to toggle on touch devices
-            item.addEventListener('click', () => {
-                const isActive = item.classList.contains('active');
-                closeOtherItems(item);
-
-                if (isActive) {
-                    anime.remove(content);
-                    const currHeight = content.getBoundingClientRect().height || content.scrollHeight || 0;
-                    anime({
-                        targets: content,
-                        height: [currHeight + 'px', '0px'],
-                        opacity: [1, 0],
-                        duration: 300,
-                        easing: 'easeInQuart',
-                        begin: () => { content.style.overflow = 'hidden'; },
-                        complete: () => {
-                            content.style.height = '0';
-                            content.style.overflow = 'hidden';
-                            content.style.opacity = 0;
-                            item.classList.remove('active');
-                        }
-                    });
-                } else {
-                    item.classList.add('active');
-                    anime.remove(content);
-                    const targetHeight = content.scrollHeight;
-                    anime({
-                        targets: content,
-                        height: ['0px', targetHeight + 'px'],
-                        opacity: [0, 1],
-                        duration: 400,
-                        easing: 'easeOutQuart',
-                        begin: () => { content.style.overflow = 'hidden'; content.style.display = 'block'; },
-                        complete: () => { content.style.height = 'auto'; content.style.overflow = ''; content.style.opacity = 1; }
-                    });
-                }
-            });
-        } else {
-            // Hover to open on pointer devices
-            item.addEventListener('mouseenter', () => {
-                if (item.classList.contains('active')) return;
-                closeOtherItems(item);
-                item.classList.add('active');
-                anime.remove(content);
-                content.style.display = 'block';
-                const targetHeight = content.scrollHeight;
-                content.style.height = '0px';
-                anime({
-                    targets: content,
-                    height: ['0px', targetHeight + 'px'],
-                    opacity: [0, 1],
                     duration: 400,
-                    easing: 'easeOutQuart',
-                    begin: () => { content.style.overflow = 'hidden'; },
-                    complete: () => { content.style.height = 'auto'; content.style.overflow = ''; content.style.opacity = 1; }
-                });
-            });
-
-            item.addEventListener('mouseleave', () => {
-                if (!item.classList.contains('active')) return;
-                anime.remove(content);
-                const currHeight = content.getBoundingClientRect().height || content.scrollHeight || 0;
-                anime({
-                    targets: content,
-                    height: [currHeight + 'px', '0px'],
-                    opacity: [1, 0],
-                    duration: 300,
-                    easing: 'easeInQuart',
-                    begin: () => { content.style.overflow = 'hidden'; },
+                    easing: 'easeInOutQuart',
                     complete: () => {
-                        content.style.height = '0';
-                        content.style.overflow = 'hidden';
-                        content.style.display = 'none';
-                        item.classList.remove('active');
+                        otherContent.style.height = '0px';
+                        otherContent.style.opacity = '0';
+                        otherItem.classList.remove('active');
                     }
                 });
             });
-        }
+
+            // Toggle current item
+            if (isActive) {
+                // Ensure a concrete start height (not 'auto') so the close
+                // animation is smooth and consistent.
+                const from = content.scrollHeight || content.offsetHeight || 0;
+                content.style.height = from + 'px';
+                /* force layout */
+                content.offsetHeight;
+                anime.remove(content);
+                anime({
+                    targets: content,
+                    height: [from, 0],
+                    opacity: [1, 0],
+                    duration: 400,
+                    easing: 'easeInOutQuart',
+                    complete: () => {
+                        content.style.height = '0px';
+                        content.style.opacity = '0';
+                        item.classList.remove('active');
+                    }
+                });
+            } else {
+                // measure full height
+                content.style.height = 'auto';
+                const full = content.scrollHeight;
+                content.style.height = '0px';
+                content.style.opacity = '0';
+                anime.remove(content);
+                anime({
+                    targets: content,
+                    height: [0, full],
+                    opacity: [0, 1],
+                    duration: 400,
+                    easing: 'easeOutQuart',
+                    begin: () => {
+                        // mark active so other clicks know this is opening
+                        item.classList.add('active');
+                    },
+                    complete: () => {
+                        content.style.height = 'auto';
+                        content.style.opacity = '1';
+                    }
+                });
+            }
+        });
     });
 }
-
 
 // Utility functions
 function debounce(func, wait) {
@@ -576,3 +652,39 @@ function initializeBackToTop() {
 
 // Initialize back to top button
 initializeBackToTop();
+
+// Ensure directory tree links open correctly and are keyboard accessible
+function initializeDirectoryTreeLinks() {
+    const fileLinks = document.querySelectorAll('.directory-tree a.file-link');
+    if (!fileLinks || fileLinks.length === 0) return;
+
+    fileLinks.forEach(link => {
+        // If JavaScript is available, ensure Enter key opens the link when focused
+        link.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                // open in new tab if target=_blank, else navigate
+                const target = link.getAttribute('target');
+                const href = link.getAttribute('href');
+                if (target === '_blank') {
+                    window.open(href, '_blank', 'noopener');
+                } else {
+                    window.location.href = href;
+                }
+            }
+        });
+
+        // For older browsers that may block target=_blank, provide a click fallback
+        link.addEventListener('click', (e) => {
+            // Allow normal behavior, but ensure noopener is used
+            const target = link.getAttribute('target');
+            if (target === '_blank') {
+                e.preventDefault();
+                window.open(link.getAttribute('href'), '_blank', 'noopener');
+            }
+        });
+    });
+}
+
+// Run after DOM ready
+document.addEventListener('DOMContentLoaded', initializeDirectoryTreeLinks);

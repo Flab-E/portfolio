@@ -43,13 +43,9 @@
         }
         
         .skill-details {
-            /* Collapsed by default so it doesn't occupy space when hidden */
-            height: 0;
             opacity: 0;
-            overflow: hidden;
             transform: translateY(10px);
-            padding-top: 0;
-            transition: none; /* animations handled by anime.js */
+            transition: all 0.3s ease;
         }
         
         .timeline-item {
@@ -67,15 +63,15 @@
         }
         
         .timeline-content {
-            /* Start collapsed; animations are handled by anime.js for smooth numeric height transitions */
             height: 0;
             opacity: 0;
             overflow: hidden;
-            padding-top: 0;
+            /* Only animate opacity and padding; height is animated via JS to avoid transitions to/from 'auto' which cause snapping */
+            transition: opacity 0.35s ease, padding-top 0.35s ease;
         }
 
         .timeline-item.active .timeline-content {
-            /* When active, JS will set height to measured px value then to 'auto' after animation completes */
+            /* Height must be managed by JS for smooth, repeatable open/close animations */
             opacity: 1;
             padding-top: 1rem;
         }
@@ -124,6 +120,7 @@
                     <a href="index.html" class="nav-link text-primary-light hover:text-accent-teal">Home</a>
                     <a href="about.html" class="nav-link text-accent-teal">About</a>
                     <a href="projects.html" class="nav-link text-primary-light hover:text-accent-teal">Projects</a>
+                    <a href="blog.html" class="nav-link text-primary-light hover:text-accent-teal">Blog</a>
                     <a href="contact.html" class="nav-link text-primary-light hover:text-accent-teal">Contact</a>
                 </div>
             </div>
@@ -179,12 +176,12 @@
                         <div>
                             <h3 class="text-xl font-bold">Programming Languages</h3>
                             <div class="w-full bg-grey-600 rounded-full h-2 mt-2">
-                                <div class="bg-accent-teal h-2 rounded-full" style="width: 80%"></div>
+                                <div class="bg-accent-teal h-2 rounded-full" style="width: 90%"></div>
                             </div>
                         </div>
                     </div>
                     <div class="skill-details">
-                        <p class="text-grey-400 mb-3">Strong working knowledge of Python, C, JavaScript, and Bash scripting for security automation and tool development. Currently building projects to gain deeper applied experience.</p>
+                        <p class="text-grey-400 mb-3">Expert-level proficiency in Python, C, JavaScript, and Bash scripting for security automation and tool development.</p>
                         <div class="flex flex-wrap gap-2">
                             <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">Python</span>
                             <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">C</span>
@@ -201,12 +198,12 @@
                         <div>
                             <h3 class="text-xl font-bold">Malware Analysis</h3>
                             <div class="w-full bg-grey-600 rounded-full h-2 mt-2">
-                                <div class="bg-accent-teal h-2 rounded-full" style="width: 77%"></div>
+                                <div class="bg-accent-teal h-2 rounded-full" style="width: 85%"></div>
                             </div>
                         </div>
                     </div>
                     <div class="skill-details">
-                        <p class="text-grey-400 mb-3">Practical experience in static and dynamic malware analysis using industry tools and guided projects to deepen reverse-engineering skills.</p>
+                        <p class="text-grey-400 mb-3">Advanced skills in static and dynamic malware analysis using industry-standard tools and custom techniques.</p>
                         <div class="flex flex-wrap gap-2">
                             <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">Ghidra</span>
                             <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">IDA Pro</span>
@@ -223,12 +220,12 @@
                         <div>
                             <h3 class="text-xl font-bold">Threat Intelligence</h3>
                             <div class="w-full bg-grey-600 rounded-full h-2 mt-2">
-                                <div class="bg-accent-teal h-2 rounded-full" style="width: 80%"></div>
+                                <div class="bg-accent-teal h-2 rounded-full" style="width: 88%"></div>
                             </div>
                         </div>
                     </div>
                     <div class="skill-details">
-                        <p class="text-grey-400 mb-3">Hands-on experience with threat feed analysis, IOC processing, and working knowledge of STIX/TAXII standards. Actively learning threat intelligence workflows.</p>
+                        <p class="text-grey-400 mb-3">Expertise in threat feed analysis, IOC processing, and intelligence enrichment using STIX/TAXII standards.</p>
                         <div class="flex flex-wrap gap-2">
                             <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">STIX 2.1</span>
                             <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">TAXII</span>
@@ -245,12 +242,12 @@
                         <div>
                             <h3 class="text-xl font-bold">Security Automation</h3>
                             <div class="w-full bg-grey-600 rounded-full h-2 mt-2">
-                                <div class="bg-accent-teal h-2 rounded-full" style="width: 84%"></div>
+                                <div class="bg-accent-teal h-2 rounded-full" style="width: 92%"></div>
                             </div>
                         </div>
                     </div>
                     <div class="skill-details">
-                        <p class="text-grey-400 mb-3">Built multiple automation scripts to streamline tasks and learn deployment practices; exploring further automation patterns and CI/CD integration.</p>
+                        <p class="text-grey-400 mb-3">Developed 50+ automation scripts reducing manual effort by 60% and improving efficiency across security operations.</p>
                         <div class="flex flex-wrap gap-2">
                             <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">Python</span>
                             <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">Bash</span>
@@ -267,12 +264,12 @@
                         <div>
                             <h3 class="text-xl font-bold">Web Security</h3>
                             <div class="w-full bg-grey-600 rounded-full h-2 mt-2">
-                                <div class="bg-accent-teal h-2 rounded-full" style="width: 72%"></div>
+                                <div class="bg-accent-teal h-2 rounded-full" style="width: 80%"></div>
                             </div>
                         </div>
                     </div>
                     <div class="skill-details">
-                        <p class="text-grey-400 mb-3">Practical web application security testing and vulnerability assessment experience using automated and manual techniques.</p>
+                        <p class="text-grey-400 mb-3">Comprehensive web application security testing and vulnerability assessment with automated scanning tools.</p>
                         <div class="flex flex-wrap gap-2">
                             <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">Burp Suite</span>
                             <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">OWASP ZAP</span>
@@ -289,12 +286,12 @@
                         <div>
                             <h3 class="text-xl font-bold">Cloud & Infrastructure</h3>
                             <div class="w-full bg-grey-600 rounded-full h-2 mt-2">
-                                <div class="bg-accent-teal h-2 rounded-full" style="width: 67%"></div>
+                                <div class="bg-accent-teal h-2 rounded-full" style="width: 75%"></div>
                             </div>
                         </div>
                     </div>
                     <div class="skill-details">
-                        <p class="text-grey-400 mb-3">Familiarity with cloud platforms, containerization, and infrastructure tooling; actively learning scalable deployment patterns and IaC.</p>
+                        <p class="text-grey-400 mb-3">Experience with cloud platforms, containerization, and infrastructure as code for scalable security solutions.</p>
                         <div class="flex flex-wrap gap-2">
                             <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">Docker</span>
                             <span class="bg-accent-teal/20 text-accent-teal px-2 py-1 rounded text-sm">Kubernetes</span>
@@ -312,7 +309,7 @@
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16 scroll-reveal">
                 <h2 class="font-display text-4xl font-bold mb-4">Professional Journey</h2>
-                <p class="text-xl text-grey-400">Hover on timeline items to explore detailed experience</p>
+                <p class="text-xl text-grey-400">Click on timeline items to explore detailed experience</p>
             </div>
             
             <div class="max-w-4xl mx-auto">
@@ -413,7 +410,7 @@
                                         <ul class="space-y-2 text-grey-400">
                                             <li>• Developed 30+ automated testing scripts for web and network vulnerabilities</li>
                                             <li>• Reduced manual audit effort by over 60% through automation</li>
-                                            <li>• Reduced API response latency by 50% through backend optimization</li>
+                                            <li>• Reduced API response latency by 50% by restructuring backend services</li>
                                             <li>• Restructured backend services using NodeJS and MongoDB performance tuning</li>
                                         </ul>
                                     </div>
@@ -443,7 +440,7 @@
                                 <span class="text-accent-teal font-semibold">ISFCR, PES University • Dec 2021 - Jun 2023</span>
                             </div>
                             <p class="text-grey-400 mb-2">Bangalore, India</p>
-                            <p class="text-sm text-grey-400 mb-4">Led team to All-India Rank 8 and expanded cybersecurity awareness to 500+ students</p>
+                            <p class="text-sm text-grey-400 mb-4">Led team to All-India Rank 8 and Global Rank 193, organizing 5 workshops and inter-collegiate competitions</p>
                             
                             <div class="timeline-content">
                                 <div class="space-y-4">
@@ -569,7 +566,6 @@
         // Initialize timeline interactions
         document.addEventListener('DOMContentLoaded', function() {
             initializeTimeline();
-            initializeSkillsMatrix();
             
             // Initialize scroll reveal
             const observerOptions = {

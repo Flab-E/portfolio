@@ -134,6 +134,7 @@
                     <a href="index.html" class="nav-link text-primary-light hover:text-accent-teal">Home</a>
                     <a href="about.html" class="nav-link text-primary-light hover:text-accent-teal">About</a>
                     <a href="projects.html" class="nav-link text-accent-teal">Projects</a>
+                    <a href="blog.html" class="nav-link text-primary-light hover:text-accent-teal">Blog</a>
                     <a href="contact.html" class="nav-link text-primary-light hover:text-accent-teal">Contact</a>
                 </div>
             </div>
@@ -248,7 +249,7 @@
                             </button>
                         </div>
                     </div>
-                </div>        
+                </div>
 
                 <!-- Router Vulnerability Triage -->
                 <div class="project-card bg-primary-dark rounded-xl overflow-hidden scroll-reveal" data-categories="automation,threat-intel" data-project="router-vuln">
@@ -385,7 +386,21 @@
                 technologies: ["Ghidra", "IDA Pro", "x64dbg", "Wireshark", "Process Monitoring", "Network Analysis"],
                 impact: "Provided valuable insights into ransomware tactics and contributed to the cybersecurity community's understanding of NetWalker operations."
             },
-            
+            opencti: {
+                title: "OpenCTI Threat Intelligence Connector",
+                category: "Threat Intelligence & Automation",
+                timeline: "2025 • CloudSEK",
+                description: "An automated IOC enrichment connector for OpenCTI platform that processes over 500 Twitter-sourced IOCs daily. The system integrates multiple threat intelligence sources including AlienVault, VirusTotal, and AbuseIPDB for comprehensive threat enrichment.",
+                achievements: [
+                    "Process 500+ Twitter-sourced IOCs daily",
+                    "Integrated AlienVault, VirusTotal, and AbuseIPDB",
+                    "Automated threat feed ingestion from multiple sources",
+                    "Improved threat intelligence processing efficiency by 40%"
+                ],
+                technicalDetails: "Built using Python with STIX 2.1 and TAXII protocols for standardized threat intelligence sharing. The system includes robust error handling, rate limiting, and scalable architecture for handling high-volume IOC processing.",
+                technologies: ["Python", "STIX 2.1", "TAXII", "OpenCTI", "RabbitMQ", "MongoDB", "API Integration"],
+                impact: "Significantly enhanced threat intelligence capabilities by automating IOC enrichment and providing actionable intelligence to security teams."
+            },
             "router-vuln": {
                 title: "Router Vulnerability Triage System",
                 category: "Vulnerability Analysis & Automation",
