@@ -22,17 +22,55 @@ function initializeFileViewer() {
     async function loadFile(filename, pushHistory = true) {
         if (!filename) return;
         try {
-            let resp = await fetch(filename);
-            if (!resp.ok) {
-                // Try fallback to filename + '.md' for files that may have been saved as markdown
-                if (!filename.toLowerCase().endsWith('.md')) {
-                    const alt = filename + '.md';
-                    resp = await fetch(alt);
-                    if (resp.ok) {
-                        filename = alt;
+            // Try a sequence of likely file locations so pages hosted on GitHub Pages (Jekyll) still work
+            async function tryFetchVariants(baseDir, name) {
+                const attempts = [];
+                // raw name as provided
+                attempts.push(name);
+                // if name didn't end with .md, try adding it
+                if (!/\.md$/i.test(name)) attempts.push(name + '.md');
+                // if name ends with .md, try replacing with .html
+                if (/\.md$/i.test(name)) attempts.push(name.replace(/\.md$/i, '.html'));
+                // try directory index (name without extension as folder)
+                const nameNoExt = name.replace(/\.md$/i, '');
+                attempts.push(nameNoExt + '/index.html');
+                attempts.push(nameNoExt + '.html');
+
+                for (let candidate of attempts) {
+                    // try relative first
+                    try {
+                        let resp = await fetch(candidate);
+                        if (resp && resp.ok) return { resp, candidate };
+                    } catch (e) {
+                        // ignore and try baseDir prefixed
+                    }
+
+                    // try with baseDir prefix
+                    try {
+                        const url = (baseDir || '') + candidate;
+                        let resp2 = await fetch(url);
+                        if (resp2 && resp2.ok) return { resp: resp2, candidate: url };
+                    } catch (e) {
+                        // ignore and continue
                     }
                 }
+
+                return { resp: null, candidate: null };
             }
+
+            const baseDir = (location.pathname && location.pathname.lastIndexOf('/') >= 0) ? location.pathname.substring(0, location.pathname.lastIndexOf('/') + 1) : '';
+            let { resp, candidate } = await tryFetchVariants(baseDir, filename);
+            if (!resp || !resp.ok) {
+                // as a last resort, try with leading './'
+                ({ resp, candidate } = await tryFetchVariants(baseDir, './' + filename));
+            }
+
+            if (!resp || !resp.ok) {
+                viewer.innerHTML = `<div class="blog-content bg-grey-800 p-8 rounded-xl"><p class="text-red-400">Failed to load ${filename}</p></div>`;
+                return;
+            }
+            // prefer the candidate path as filename (useful for history)
+            if (candidate) filename = candidate;
 
             if (!resp.ok) {
                 viewer.innerHTML = `<div class="blog-content bg-grey-800 p-8 rounded-xl"><p class="text-red-400">Failed to load ${filename}: ${resp.status} ${resp.statusText}</p></div>`;
@@ -95,6 +133,10 @@ function initializeFileViewer() {
                 // Prevent other global anchor handlers (like smooth-scroll) from intercepting
                 e.preventDefault();
                 e.stopImmediatePropagation();
+                // Debugging aid: log where clicks originate (helpful on GitHub Pages)
+                if (typeof console !== 'undefined' && console.log) {
+                    console.log('[file-link] clicked, loading:', file, 'element:', link);
+                }
                 loadFile(file);
             }
         });
