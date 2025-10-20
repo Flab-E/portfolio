@@ -57,6 +57,46 @@
         .blog-content {
             line-height: 1.7;
         }
+
+        /* Strong global protections against horizontal overflow */
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        /* Enforce border-box everywhere to make width calculations predictable */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        /* Ensure all inner elements cannot exceed container width */
+        .blog-content * , .directory-tree * {
+            max-width: 100% !important;
+        }
+
+        /* Make blog content wrap long words and prevent horizontal overflow */
+        .blog-content, .directory-tree {
+            box-sizing: border-box;
+            max-width: 100%;
+        }
+
+        /* Make images and media responsive */
+        .blog-content img, .blog-content video, .blog-content iframe {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .blog-content p,
+        .blog-content li,
+        .blog-content h1,
+        .blog-content h2,
+        .blog-content h3,
+        .blog-content code {
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            hyphens: auto;
+        }
         
         .blog-content h1 {
             font-size: 2.5rem;
@@ -126,6 +166,8 @@
             overflow-x: auto;
             margin: 1rem 0;
             border-left: 4px solid #14b8a6;
+            max-width: 100%;
+            box-sizing: border-box;
         }
         
         .blog-content blockquote {
@@ -143,6 +185,8 @@
             background: #2d2d2d;
             border-radius: 0.5rem;
             overflow: hidden;
+            display: block;
+            overflow-x: auto;
         }
         
         .blog-content th, .blog-content td {
@@ -168,10 +212,13 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.875rem;
         }
+        /* Make each tree row a two-column flex layout: pointer + filename */
         .directory-tree .branch {
             color: #6b7280; /* muted grey for tree characters */
+            flex: 0 0 1.4rem;
             display: inline-block;
-            width: 1.1rem;
+            width: 1.4rem;
+            text-align: left;
         }
         .directory-tree a.file-link {
             color: inherit;
@@ -182,9 +229,13 @@
             font-style: italic;
             font-weight: 600;
             font-family: 'mono', 'JetBrains Mono', monospace;
-            display: inline-flex;
+            display: block;
+            flex: 1 1 auto;
             gap: 0.5rem;
             align-items: center;
+            white-space: nowrap; /* keep on one line and truncate */
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .directory-tree .file-link .accent {
             width: 6px;
@@ -214,6 +265,9 @@
             padding: 0.25rem 0;
             cursor: pointer;
             transition: color 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         
         .tree-item:hover {
@@ -298,6 +352,79 @@
         .analysis-close:hover {
             color: #e5e7eb;
             background: rgba(255,255,255,0.02);
+        }
+
+        /* Responsive adjustments for small screens */
+        @media (max-width: 640px) {
+            .analysis-banner {
+                /* Make the banner part of the flow on mobile so it doesn't overlap */
+                position: static;
+                bottom: auto;
+                left: auto;
+                right: auto;
+                max-width: none;
+                margin: 12px 12px;
+                padding: 8px 10px;
+                font-size: 0.95rem;
+                border-radius: 6px;
+                animation: none !important;
+            }
+
+            .analysis-banner .analysis-link {
+                padding: 6px 8px;
+                font-size: 0.92rem;
+            }
+
+            /* Make directory tree flow above content and be full width */
+            .directory-tree {
+                position: relative;
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+
+            /* Remove additional left margins that can push content off-screen */
+            .directory-tree .ml-4 { margin-left: 0 !important; }
+
+            /* Ensure sidebar is not sticky on small screens */
+            .sticky {
+                position: relative !important;
+                top: auto !important;
+            }
+
+            .blog-content {
+                padding: 0.75rem !important;
+            }
+
+            /* Prevent horizontal scrolling on very small screens */
+            body {
+                overflow-x: hidden;
+            }
+
+            /* Ensure the page container has side padding on very small screens */
+            .max-w-7xl,
+            .max-w-4xl {
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+
+            /* Reduce code/pre font sizes for mobile */
+            .blog-content pre, .blog-content code {
+                font-size: 0.8rem;
+                white-space: pre-wrap !important;
+                word-break: break-word !important;
+            }
+
+            /* Aggressively break very long tokens in code and table cells to prevent overflow */
+            .blog-content pre, .blog-content code, .blog-content td, .blog-content th {
+                word-break: break-all !important;
+                overflow-wrap: anywhere !important;
+                white-space: pre-wrap !important;
+            }
+
+            /* Ensure inline code wraps on mobile */
+            .blog-content code {
+                white-space: pre-wrap !important;
+            }
         }
     </style>
 </head>
@@ -673,6 +800,67 @@ foreach ($i in $Inputs) {
                 // Recompute on resize/scroll to avoid overlap with footer
                 window.addEventListener('resize', positionBanner);
                 window.addEventListener('scroll', positionBanner);
+
+                // Relocate banner into document flow on small screens (before footer)
+                function relocateBannerForMobile() {
+                    const isMobile = (window.innerWidth || document.documentElement.clientWidth) <= 640 || window.matchMedia('(max-width: 640px)').matches;
+                    const footerEl = document.querySelector('footer');
+                    const nav = document.querySelector('nav');
+                    if (isMobile) {
+                        // Prefer inserting the banner after the nav so it shows on load below the fixed header
+                        if (nav && nav.parentNode) {
+                            if (banner.parentNode !== nav.parentNode) {
+                                nav.parentNode.insertBefore(banner, nav.nextSibling);
+                            }
+                            // compute nav height so we offset the banner below the fixed nav
+                            const navHeight = (nav.getBoundingClientRect && nav.getBoundingClientRect().height) ? Math.ceil(nav.getBoundingClientRect().height) : 56;
+                            banner.style.position = 'relative';
+                            banner.style.zIndex = '9999';
+                            // ensure banner is visually below the nav (add top margin)
+                            banner.style.marginTop = (navHeight + 8) + 'px';
+                            banner.style.marginBottom = '12px';
+                            banner.style.marginLeft = '12px';
+                            banner.style.marginRight = '12px';
+                            banner.style.animation = 'none';
+                            banner.style.display = 'flex';
+                            banner.style.opacity = '1';
+                            banner.setAttribute('aria-hidden', 'false');
+                        } else if (footerEl && footerEl.parentNode) {
+                            if (banner.parentNode !== footerEl.parentNode) {
+                                footerEl.parentNode.insertBefore(banner, footerEl);
+                            }
+                            banner.style.position = 'relative';
+                            banner.style.zIndex = '9999';
+                            banner.style.margin = '12px';
+                            banner.style.animation = 'none';
+                            banner.style.display = 'flex';
+                            banner.style.opacity = '1';
+                            banner.setAttribute('aria-hidden', 'false');
+                        }
+                    } else {
+                        // move the banner back to floating area after the nav if needed
+                        if (nav && nav.parentNode && banner.parentNode !== nav.parentNode) {
+                            nav.parentNode.insertBefore(banner, nav.nextSibling);
+                            // restore floating behavior
+                            banner.style.position = '';
+                            banner.style.margin = '';
+                            banner.style.animation = '';
+                            banner.style.zIndex = '';
+                            banner.style.marginTop = '';
+                            banner.style.marginBottom = '';
+                            banner.style.marginLeft = '';
+                            banner.style.marginRight = '';
+                            banner.style.display = '';
+                            banner.style.opacity = '';
+                            banner.removeAttribute('aria-hidden');
+                            positionBanner();
+                        }
+                    }
+                }
+
+                // Run once and on resize
+                relocateBannerForMobile();
+                window.addEventListener('resize', relocateBannerForMobile);
 
                 closeBtn.addEventListener('click', () => {
                     banner.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
