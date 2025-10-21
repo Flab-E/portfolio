@@ -145,8 +145,18 @@ if (osfullName.Contains(<Module>.decrypt_b64_AES("jt4JXyzFY+P3zf6k/0mkCA==")) 
   
 - ***[[agentTesla_string_decryptor.ps1]]*** is a small powershell script I created to decrypt these strings and see what is being passed as arguments in these encrypted strings.  
 - Looking at ***[[floss_output.txt]]*** it's pretty evident that we will find a lot of these base64 encoded strings. This powershell script will definitely be helpful in analyzing this malware.  
+- I also used this script to run batch decryption on strings in floss and show the output for those that were base64 with valid decrpted out. You can click on the link below or navigate to the correspoding file.  
+***[[decrypted_bulk_strings.txt.md]]***  
   
-### Overview  
+Some interesting strings are available in this list of decrypted strings. You can tell what all tools and applications are listed, most likely the tools that the infostealer looks for to try and grab any stored secrets or credentials. Among all these strings one string (defanged) stood out:  
+`http://www.vacanzaimmobiliare[.]it/testla/WebPanel/post.php`  
+  
+This does not seem like any URL for any legitimate app. There are some URLs in the list of decrypted strings that are apps to grab the infected system's IP or DNS data, but this does not seem like any of those apps. When I checked it out on VirusTotal, my suspicion was validated.  
+https://www.virustotal.com/gui/url/b236d1a1c5b2bdd0f1d1167bd1fd0c70792097a11373d895a4e1a96fc1d79747  
+  
+The malware has placeholders for download links, smtp and ftp endpoints which will most likely be fetched from it's C@ (Command and Control) server, until which time it stores the credentials it grabs locally in a created temp directory. This was revealed to me during the reverse engineering, where during the setup a function was being used extensively to create and fetch temp directory with log structure during the setup.  
+  
+### Flow of Malware  
 #### Setup  
 - The malware first checks the value that is set for the registry key `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\EnableLua`
 	- If it's value is 1, it sets it to 0 automatically. This is to disable UAC (User Access Control) allowing the malware to make key changes to System32, and other vital systems
@@ -166,4 +176,7 @@ if (osfullName.Contains(<Module>.decrypt_b64_AES("jt4JXyzFY+P3zf6k/0mkCA==")) 
   9. mbam
   10. ekrn
 ### Pre-attack
-Disables the following for the current user (and some for local machine too): UAC, task manager, cmd, run option or menu, control panel, regedit.exe, system restore, folder options (to disallow users from seeing hidden files or file extensions), user from finding msconfig through menu or explorer (tool used to view or manage startup apps, service, boot options and so on)
+Disables the following for the current user (and some for local machine too): UAC, task manager, cmd, run option or menu, control panel, regedit.exe, system restore, folder options (to disallow users from seeing hidden files or file extensions), user from finding msconfig through menu or explorer (tool used to view or manage startup apps, service, boot options and so on)  
+  
+### Up Next  
+The malware then fetches a download link and some other server addresses for smtp and ftp communication. These placeholders are not available on stating and reverse engineering analysis. Likely scenario: it communicates with a C2 to fetch values for these placeholders. I will dive into this and Dynamic Analysis with real-time behaviour and netowork monitor for the next part.  
