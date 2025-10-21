@@ -6,7 +6,7 @@
 ## Overview
 ### > Sample
 `https://bazaar.abuse.ch/sample/7c4072f5ae6fdf61d9f6d051a5bad41290e6e66e5a564110ec97a256fd4980b4/`  
-This sample was collected from Mlaware Bazaar on 8th October. At that time, the executable file name that we get within the archive had a low score of 10 on VirusTotal, which has significantly gone up now.  
+This sample was collected from Malware Bazaar on 8th October. At that time, the executable file name that we get within the archive had a low score of 10 on VirusTotal, which has significantly gone up now.  
   
 ![[Pasted image 20251009215151.png]]
   
