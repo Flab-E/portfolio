@@ -868,6 +868,17 @@ foreach ($i in $Inputs) {
                     banner.style.transform = 'translateY(6px)';
                     setTimeout(() => banner.style.display = 'none', 260);
                 });
+
+                // Also hide banner when the analysis link is clicked
+                const analysisLink = banner.querySelector('.analysis-link');
+                if (analysisLink) {
+                    analysisLink.addEventListener('click', () => {
+                        banner.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+                        banner.style.opacity = '0';
+                        banner.style.transform = 'translateY(6px)';
+                        setTimeout(() => banner.style.display = 'none', 260);
+                    });
+                }
             })();
         </script>
 </body>
