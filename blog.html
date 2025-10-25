@@ -1,232 +1,737 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog - Abhay Bhat</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'primary-dark': '#1a1a1a',
-                        'primary-light': '#f8f8f8',
-                        'accent-teal': '#14b8a6',
-                        'accent-teal-dark': '#0f766e',
-                        'grey-800': '#2d2d2d',
-                        'grey-600': '#4a4a4a',
-                        'grey-400': '#9ca3af'
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Blog - Abhay Bhat</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            "primary-dark": "#1a1a1a",
+                            "primary-light": "#f8f8f8",
+                            "accent-teal": "#14b8a6",
+                            "accent-teal-dark": "#0f766e",
+                            "grey-800": "#2d2d2d",
+                            "grey-600": "#4a4a4a",
+                            "grey-400": "#9ca3af",
+                        },
+                        fontFamily: {
+                            display: ["Georgia", "serif"],
+                            body: ["Inter", "sans-serif"],
+                            mono: ["JetBrains Mono", "monospace"],
+                        },
                     },
-                    fontFamily: {
-                        'display': ['Georgia', 'serif'],
-                        'body': ['Inter', 'sans-serif'],
-                        'mono': ['JetBrains Mono', 'monospace']
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
-        .blog-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-        }
-        
-        .blog-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 25px 50px -12px rgba(20, 184, 166, 0.25);
-        }
-        
-        .scroll-reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.6s ease;
-        }
-        
-        .scroll-reveal.revealed {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        .nav-link {
-            position: relative;
-            transition: color 0.3s ease;
-        }
-        
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: #14b8a6;
-            transition: width 0.3s ease;
-        }
-        
-        .nav-link:hover::after {
-            width: 100%;
-        }
-        
-        .tag {
-            background: rgba(20, 184, 166, 0.2);
-            color: #14b8a6;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-    </style>
-</head>
-<body class="bg-primary-dark text-primary-light font-body">
-    <!-- Navigation -->
-    <nav class="fixed top-0 w-full z-50 bg-primary-dark/90 backdrop-blur-md border-b border-grey-800">
-        <div class="max-w-7xl mx-auto px-6 py-4">
-            <div class="flex justify-between items-center">
-                <div class="font-display text-xl font-bold text-accent-teal">
-                    <a href="index.html">Abhay Bhat</a>
-                </div>
-                <div class="hidden md:flex space-x-8">
-                    <a href="index.html" class="nav-link text-primary-light hover:text-accent-teal">Home</a>
-                    <a href="about.html" class="nav-link text-primary-light hover:text-accent-teal">About</a>
-                    <a href="projects.html" class="nav-link text-primary-light hover:text-accent-teal">Projects</a>
-                    <a href="blog.html" class="nav-link text-accent-teal">Blog</a>
-                    <a href="contact.html" class="nav-link text-primary-light hover:text-accent-teal">Contact</a>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="pt-32 pb-20 bg-gradient-to-br from-primary-dark to-grey-800">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center scroll-reveal">
-                <h1 class="font-display text-5xl lg:text-6xl font-bold mb-6">
-                    Cybersecurity <span class="text-accent-teal">Blog</span>
-                </h1>
-                <p class="text-xl text-grey-400 max-w-3xl mx-auto leading-relaxed">
-                    Deep dives into malware analysis, threat intelligence, and cybersecurity research. 
-                    Sharing insights from real-world investigations and security operations.
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Blog Posts Grid -->
-    <section class="py-20 bg-primary-dark">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="grid lg:grid-cols-3 gap-8">
-                
-                <!-- Blog Post 1: AgentTesla Analysis -->
-                <div class="blog-card bg-grey-800 rounded-xl overflow-hidden scroll-reveal">
-                    <div class="h-48 bg-gradient-to-br from-accent-teal/20 to-accent-teal-dark/20 flex items-center justify-center">
-                        <div class="text-6xl">🦠</div>
-                    </div>
-                    <div class="p-6">
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            <span class="tag">Malware Analysis</span>
-                            <span class="tag">.NET</span>
-                            <span class="tag">Stealer</span>
-                        </div>
-                        <h3 class="text-xl font-bold mb-3">AgentTesla Stealer Analysis</h3>
-                        <p class="text-grey-400 mb-4">Comprehensive static analysis of an AgentTesla sample, exploring its obfuscation techniques, string decryption, and behavioral indicators.</p>
-                        <div class="flex justify-between items-center mb-4">
-                            <span class="text-sm text-grey-400">December 2024</span>
-                            <span class="text-sm text-accent-teal">15 min read</span>
-                        </div>
-                        <a href="blogs/AgentTesla_Analysis/index.html" class="text-accent-teal hover:text-accent-teal-dark font-semibold">
-                            Read Analysis →
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Blog Features -->
-    <section class="py-20 bg-grey-800">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-16 scroll-reveal">
-                <h2 class="font-display text-4xl font-bold mb-4">What You'll Find Here</h2>
-                <p class="text-xl text-grey-400">In-depth technical content for cybersecurity professionals</p>
-            </div>
-            
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div class="text-center scroll-reveal">
-                    <div class="text-4xl mb-4">🦠</div>
-                    <h3 class="text-xl font-bold mb-2">Malware Analysis</h3>
-                    <p class="text-grey-400">Detailed breakdowns of malware samples, reverse engineering techniques, and behavioral analysis.</p>
-                </div>
-                
-                <div class="text-center scroll-reveal">
-                    <div class="text-4xl mb-4">🔍</div>
-                    <h3 class="text-xl font-bold mb-2">Threat Intelligence</h3>
-                    <p class="text-grey-400">IOC analysis, threat actor profiling, and intelligence gathering methodologies.</p>
-                </div>
-                
-                <div class="text-center scroll-reveal">
-                    <div class="text-4xl mb-4">🔧</div>
-                    <h3 class="text-xl font-bold mb-2">Security Tools</h3>
-                    <p class="text-grey-400">Custom tool development, automation scripts, and security workflow optimization.</p>
-                </div>
-                
-                <div class="text-center scroll-reveal">
-                    <div class="text-4xl mb-4">🏆</div>
-                    <h3 class="text-xl font-bold mb-2">CTF Writeups</h3>
-                    <p class="text-grey-400">Competition challenges, solution walkthroughs, and advanced techniques.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-primary-dark border-t border-grey-800 py-12">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center">
-                <div class="font-display text-2xl font-bold text-accent-teal mb-4">Abhay Bhat</div>
-                <p class="text-grey-400 mb-6">Cybersecurity Professional & Threat Researcher</p>
-                <div class="flex justify-center space-x-6 mb-8">
-                    <a href="mailto:abhaybhat0312@gmail.com" class="text-grey-400 hover:text-accent-teal transition-colors">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-                        </svg>
-                    </a>
-                    <a href="https://linkedin.com/in/abhay-bhat-893b211b7" class="text-grey-400 hover:text-accent-teal transition-colors">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                        </svg>
-                    </a>
-                </div>
-                <p class="text-sm text-grey-600">© 2025 Abhay Bhat. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <script src="main.js"></script>
-    <script>
-        // Initialize scroll reveal
-        document.addEventListener('DOMContentLoaded', function() {
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
+                },
             };
+        </script>
+        <style>
+            @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('revealed');
+            .blog-card {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                cursor: pointer;
+            }
+
+            .blog-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 25px 50px -12px rgba(20, 184, 166, 0.25);
+            }
+
+            .scroll-reveal {
+                opacity: 0;
+                transform: translateY(30px);
+                transition: all 0.6s ease;
+            }
+
+            .scroll-reveal.revealed {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .nav-link {
+                position: relative;
+                transition: color 0.3s ease;
+            }
+
+            .nav-link::after {
+                content: "";
+                position: absolute;
+                bottom: -4px;
+                left: 0;
+                width: 0;
+                height: 2px;
+                background: #14b8a6;
+                transition: width 0.3s ease;
+            }
+
+            .nav-link:hover::after {
+                width: 100%;
+            }
+
+            .tag {
+                background: rgba(20, 184, 166, 0.2);
+                color: #14b8a6;
+                padding: 0.25rem 0.75rem;
+                border-radius: 9999px;
+                font-size: 0.875rem;
+                font-weight: 500;
+            }
+
+            ""
+
+                    ""
+            /* Blog rendered markdown styles */
+            .blog-content {
+                color: #e5e7eb; /* base text */
+                font-size: 16px;
+                line-height: 1.7;
+                word-break: break-word;
+                -webkit-font-smoothing: antialiased;
+                /* Ensure rendered markdown flows with the page (no internal clipping) */
+                overflow: visible;
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+
+            .blog-content h1,
+            .blog-content h2,
+            .blog-content h3,
+            .blog-content h4 {
+                margin-top: 1.25rem;
+                margin-bottom: 0.75rem;
+                line-height: 1.25;
+                color: #f8f8f8;
+                font-weight: 700;
+            }
+
+            /* Use the sea-green accent for section headings (h2/h3) */
+            .blog-content h2,
+            .blog-content h3 {
+                color: #14b8a6;
+            }
+
+            .blog-content p {
+                margin: 0 0 1rem 0;
+                color: #d1d5db;
+            }
+
+            .blog-content a {
+                color: #14b8a6;
+                text-decoration: underline;
+            }
+
+            .blog-content strong {
+                color: #f8f8f8;
+                font-weight: 700;
+            }
+
+            .blog-content em,
+            .blog-content i {
+                color: #9ca3af;
+                font-style: italic;
+            }
+
+            .blog-content blockquote {
+                border-left: 4px solid rgba(20, 184, 166, 0.8);
+                padding-left: 1rem;
+                color: #d1d5db;
+                margin: 0 0 1rem 0;
+                background: rgba(20, 184, 166, 0.02);
+            }
+
+            /* Stronger, more specific rule to prevent theme overrides and fix typo (box-shadow) */
+            body .blog-content pre,
+            body .blog-content pre[class*="language-"],
+            body .blog-content pre[class^="language-"] {
+                background: #07121a !important;
+                background-color: #07121a !important;
+                color: #e6edf3;
+                padding: 1rem 1.25rem;
+                border-radius: 10px;
+                box-shadow: 0 6px 12px rgba(2, 6, 10, 0.6);
+                border: 1px solid rgba(255, 255, 255, 0.06);
+                overflow: auto;
+            }
+
+            .blog-content code {
+                background: rgba(255, 255, 255, 0.1);
+                padding: 0.15rem 0.4rem;
+                border-radius: 4px;
+            }
+
+            .blog-content code {
+                background: rgba(15, 23, 30, 0.6);
+                padding: 2px 6px;
+                border-radius: 4px;
+                font-family: inherit;
+                font-size: 0.95em;
+            }
+
+            /* Tables */
+            .blog-content table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 0 0 1rem 0;
+                font-size: 0.95rem;
+            }
+
+            .blog-content th,
+            .blog-content td {
+                border: 1px solid #374151;
+                padding: 0.5rem 0.75rem;
+                text-align: left;
+                vertical-align: top;
+            }
+
+            .blog-content th {
+                background: rgba(20, 184, 166, 0.06);
+                color: #14b8a6;
+            }
+
+            .blog-content hr {
+                border: none;
+                border-top: 1px solid #374151;
+                margin: 1.25rem 0;
+            }
+
+            .blog-content ul,
+            .blog-content ol {
+                margin: 0 0 1rem 1.25rem;
+                list-style: disc outside;
+                padding-left: 1.25rem; /* ensures markers are visible / not clipped */
+            }
+
+            .blog-content li {
+                margin-bottom: 0.35rem;
+            }
+
+            .blog-content ul li::marker,
+            .blog-content ol li::marker {
+                color: #9ca3af;
+            }
+
+            .blog-content img {
+                max-width: 100%;
+                height: auto;
+                display: block;
+                margin: 1rem 0;
+            }
+
+            /* Framed figure style for images with optional captions.
+               Use in markdown/html as:
+               <figure><img src="..."><figcaption>Caption text</figcaption></figure>
+            */
+            .blog-content figure {
+                background: rgba(0, 0, 0, 0.25);
+                border-radius: 0.6rem;
+                padding: 0.5rem;
+                display: inline-block;
+                margin: 1rem 0;
+            }
+
+            .blog-content figure img {
+                display: block;
+                border-radius: 0.5rem;
+                max-width: 100%;
+                height: auto;
+            }
+
+            .blog-content figure figcaption {
+                color: #9ca3af;
+                font-size: 0.85rem;
+                margin-top: 0.4rem;
+            }
+
+            /* Make sure long words and code don't force horizontal layout */
+            .blog-content,
+            .blog-content * {
+                word-break: break-word;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .blog-content small,
+            .blog-content .muted {
+                color: #9ca3af;
+            }
+
+            .blog-content a:focus {
+                outline: 3px solid rgba(20, 184, 166, 0.18);
+                outline-offset: 2px;
+            }
+        </style>
+    </head>
+    <body class="bg-primary-dark text-primary-light font-body">
+        <!-- Navigation -->
+        <nav
+            class="fixed top-0 w-full z-50 bg-primary-dark/90 backdrop-blur-md border-b border-grey-800"
+        >
+            <div class="max-w-7xl mx-auto px-6 py-4">
+                <div class="flex justify-between items-center">
+                    <div
+                        class="font-display text-xl font-bold text-accent-teal"
+                    >
+                        <a href="index.html">Abhay Bhat</a>
+                    </div>
+                    <div class="hidden md:flex space-x-8">
+                        <a
+                            href="index.html"
+                            class="nav-link text-primary-light hover:text-accent-teal"
+                            >Home</a
+                        >
+                        <a
+                            href="about.html"
+                            class="nav-link text-primary-light hover:text-accent-teal"
+                            >About</a
+                        >
+                        <a
+                            href="projects.html"
+                            class="nav-link text-primary-light hover:text-accent-teal"
+                            >Projects</a
+                        >
+                        <a href="blog.html" class="nav-link text-accent-teal"
+                            >Blog</a
+                        >
+                        <a
+                            href="contact.html"
+                            class="nav-link text-primary-light hover:text-accent-teal"
+                            >Contact</a
+                        >
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section
+            r
+            class="pt-32 pb-20 bg-gradient-to-br from-primary-dark to-grey-800"
+        >
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center scroll-reveal">
+                    <h1
+                        class="font-display text-5xl lg:text-6xl font-bold mb-6"
+                    >
+                        Cybersecurity <span class="text-accent-teal">Blog</span>
+                    </h1>
+                    <p
+                        class="text-xl text-grey-400 max-w-3xl mx-auto leading-relaxed"
+                    >
+                        Deep dives into malware analysis, threat intelligence,
+                        and cybersecurity research. Sharing insights from
+                        real-world investigations and security operations.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Blog Posts Grid (Dynamic Blog App) -->
+        <section class="py-20 bg-primary-dark">
+            <div class="max-w-screen-2x1 mx-auto px-8">
+                <!-- Dynamic blog application: cards index (top) + left = directory tree, right = viewer -->
+                <div class="flex flex-col gap-8">
+                    <!-- Blogs cards grid (index) - rendered from manifest -->
+                    <section id="blogs-cards-section" class="w-full">
+                        <div class="max-w-7xl mx-auto px-6">
+                            <h2
+                                class="font-display text-3xl text-primary-light mb-6"
+                            >
+                                All Blogs
+                            </h2>
+                            <div
+                                id="blogs-cards"
+                                class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+                            >
+                                <!-- Cards will be populated from blogs/manifest.json -->
+                                <div class="text-grey-400">
+                                    Loading blog cards…
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    </section>
+                </div>
+                <!-- Script to populate blog cards from manifest and wire cards to the existing tree/viewer -->
+
+                <!-- Script to populate blog cards from manifest and wire cards to the existing tree/viewer -->
+                <script>
+                    (function () {
+                        async function fetchManifest() {
+                            try {
+                                const resp = await fetch(
+                                    "blogs/manifest.json",
+                                    { cache: "no-store" },
+                                );
+                                if (!resp.ok)
+                                    throw new Error("Failed to load manifest");
+                                return await resp.json();
+                            } catch (e) {
+                                console.warn(
+                                    "Could not fetch manifest for cards:",
+                                    e,
+                                );
+                                return null;
+                            }
+                        }
+
+                        function makeCard(blog) {
+                            const display =
+                                blog.displayName ||
+                                blog.display ||
+                                (
+                                    blog.dir ||
+                                    blog.id ||
+                                    blog.slug ||
+                                    "Untitled"
+                                ).replace(/_/g, " ");
+                            const summary =
+                                blog.summary ||
+                                (blog.meta && blog.meta.summary) ||
+                                "";
+                            const author =
+                                blog.author ||
+                                (blog.meta && blog.meta.author) ||
+                                "";
+                            const date =
+                                blog.date ||
+                                (blog.meta && blog.meta.date) ||
+                                "";
+
+                            const card = document.createElement("div");
+                            card.className =
+                                "blog-card bg-primary-dark rounded-xl overflow-hidden scroll-reveal";
+                            card.style.cursor = "pointer";
+
+                            const hero = document.createElement("div");
+                            hero.className =
+                                "h-36 bg-gradient-to-br from-accent-teal/10 to-accent-teal-dark/10 flex items-center justify-center";
+                            hero.innerHTML = '<div class=\"text-4xl\">📰</div>';
+
+                            const body = document.createElement("div");
+                            body.className = "p-6";
+
+                            const h3 = document.createElement("h3");
+                            h3.className = "text-xl font-bold mb-2";
+                            h3.textContent = display;
+
+                            const p = document.createElement("p");
+                            p.className = "text-grey-400 mb-4";
+                            p.textContent =
+                                summary ||
+                                "No summary available. Click to open the blog.";
+
+                            const metaRow = document.createElement("div");
+                            metaRow.className =
+                                "flex justify-between items-center";
+
+                            const metaLeft = document.createElement("span");
+                            metaLeft.className = "text-sm text-grey-400";
+                            metaLeft.textContent =
+                                (date ? date + " • " : "") + (author || "");
+
+                            const openBtn = document.createElement("button");
+                            openBtn.className =
+                                "text-accent-teal hover:text-accent-teal-dark font-semibold";
+                            openBtn.textContent = "Open →";
+
+                            metaRow.appendChild(metaLeft);
+                            metaRow.appendChild(openBtn);
+
+                            body.appendChild(h3);
+                            body.appendChild(p);
+                            body.appendChild(metaRow);
+
+                            card.appendChild(hero);
+                            card.appendChild(body);
+
+                            // Wrap the card inside an anchor that points to the reader page.
+                            // Prefer linking the reader to an explicit index path via ?file=<indexpath> when available.
+                            const anchor = document.createElement("a");
+                            const idForLink = blog.id || blog.dir || blog.slug || display.replace(/\s+/g, "_");
+                            // Compute reader base URL (absolute) and attempt to use the manifest-provided index when present.
+                            const readerBase = new URL("blogs/index.html", location.href).href;
+                            let indexPath = null;
+                            try {
+                                if (blog.index) {
+                                    // If manifest provided an index path, ensure it is rooted under 'blogs/'.
+                                    indexPath = blog.index.startsWith("blogs/") ? blog.index : "blogs/" + blog.index;
+                                } else {
+                                    // Fallback: heuristically construct likely index.md inside the blog directory.
+                                    const d = (blog.dir || blog.id || blog.slug || "").toString().replace(/\/$/, "");
+                                    if (d) indexPath = "blogs/" + d + "/index.md";
+                                }
+                            } catch (e) {
+                                indexPath = null;
+                            }
+                            // Build the final href: prefer ?file=<indexPath> when we have a candidate, otherwise fall back to the reader with hash id.
+                            let href = null;
+                            if (indexPath) {
+                                href = readerBase + "?file=" + encodeURIComponent(indexPath);
+                            } else {
+                                href = new URL("blogs/index.html#" + encodeURIComponent(idForLink), window.location.href).href;
+                            }
+                            anchor.setAttribute("href", href);
+                            anchor.className = "blog-card-link";
+                            anchor.style.textDecoration = "none";
+                            // Ensure the visual card remains the same; move the card into the anchor.
+                            anchor.appendChild(card);
+
+                            return anchor;
+                        }
+
+                        async function populateCards() {
+                            const root = document.getElementById("blogs-cards");
+                            if (!root) return;
+                            root.innerHTML =
+                                '<div class=\"text-grey-400\">Loading blog cards…</div>';
+                            const manifest = await fetchManifest();
+                            if (
+                                !manifest ||
+                                !Array.isArray(manifest.blogs) ||
+                                !manifest.blogs.length
+                            ) {
+                                root.innerHTML =
+                                    '<div class=\"text-grey-400\">No blogs found in manifest.</div>';
+                                return;
+                            }
+                            root.innerHTML = "";
+                            manifest.blogs.forEach((b) => {
+                                const card = makeCard(b);
+                                root.appendChild(card);
+                            });
+
+                            // Initialize simple reveal behavior for cards (matches existing scroll-reveal usage)
+                            document
+                                .querySelectorAll(".scroll-reveal")
+                                .forEach((el, i) => {
+                                    setTimeout(
+                                        () => el.classList.add("revealed"),
+                                        40 * i,
+                                    );
+                                });
+                        }
+
+                        // Populate on DOM ready. If blog_renderer later overwrites the manifest or tree, user interactions are still wired.
+                        if (document.readyState === "loading") {
+                            document.addEventListener(
+                                "DOMContentLoaded",
+                                populateCards,
+                            );
+                        } else {
+                            setTimeout(populateCards, 0);
+                        }
+                    })();
+                </script>
+            </div>
+        </section>
+
+        <!-- Renderer dependencies and bootstrap script -->
+        <!-- Markdown renderer (marked) and syntax highlighter (Prism) -->
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+        />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+        <!-- Prism language component for C# (.NET), bash, powershell, python -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-powershell.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+        <!-- Normalize common code-fence info strings into Prism language classes and trigger highlighting -->
+        <script>
+            (function () {
+                function normalizeCodeBlocks(root) {
+                    root = root || document;
+                    var blocks = root.querySelectorAll("pre code");
+                    blocks.forEach(function (el) {
+                        var cls = el.className || "";
+                        // If renderer placed data-language, consider it too
+                        var dataLang = el.getAttribute("data-language") || "";
+                        var info = (cls + " " + dataLang).toLowerCase();
+                        // Map common user-specified labels to Prism's csharp
+                        if (
+                            /\b(dotnet|\.net|^net$)\b/i.test(info) ||
+                            /\b(c#|csharp)\b/i.test(info)
+                        ) {
+                            // remove existing language-* tokens and add the canonical class
+                            el.className = (el.className || "")
+                                .replace(/\blanguage-[^\s]+\b/g, "")
+                                .trim();
+                            if (el.classList)
+                                el.classList.add("language-csharp");
+                            else
+                                el.className = (
+                                    el.className + " language-csharp"
+                                ).trim();
+                        } else if (
+                            !/\blanguage-[a-z0-9-]+\b/i.test(el.className)
+                        ) {
+                            // Heuristic: if no explicit language, try to detect C# by common tokens
+                            var txt = (el.textContent || "").slice(0, 800);
+                            if (
+                                /\bnamespace\b|\busing\b|\bclass\b|\bConsole\.|\bSystem\./.test(
+                                    txt,
+                                )
+                            ) {
+                                el.className = (
+                                    el.className + " language-csharp"
+                                ).trim();
+                            }
+                        }
+                    });
+                }
+
+                // Run normalizer at load and highlight afterwards
+                document.addEventListener("DOMContentLoaded", function () {
+                    try {
+                        normalizeCodeBlocks(document);
+                        if (window.Prism && Prism.highlightAll)
+                            Prism.highlightAll();
+                    } catch (e) {
+                        // no-op
                     }
                 });
-            }, observerOptions);
 
-            document.querySelectorAll('.scroll-reveal').forEach(el => {
-                observer.observe(el);
+                // Expose a hook so dynamic renderers can call normalization before highlighting
+                window.normalizeBlogCodeBlocks = normalizeCodeBlocks;
+            })();
+        </script>
+
+        <!-- App-specific renderer (will use portfolio/blogs/manifest.json by convention).
+         Create blogs/blog_renderer.js to implement directory discovery, metadata extraction (YAML frontmatter preferred),
+         rendering via marked, and code block highlighting via Prism. -->
+        <script src="blogs/blog_renderer.js"></script>
+
+        <!-- Blog Features -->
+        <section class="py-20 bg-grey-800">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-16 scroll-reveal">
+                    <h2 class="font-display text-4xl font-bold mb-4">
+                        What You'll Find Here
+                    </h2>
+                    <p class="text-xl text-grey-400">
+                        In-depth technical content for cybersecurity
+                        professionals
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="text-center scroll-reveal">
+                        <div class="text-4xl mb-4">🦠</div>
+                        <h3 class="text-xl font-bold mb-2">Malware Analysis</h3>
+                        <p class="text-grey-400">
+                            Detailed breakdowns of malware samples, reverse
+                            engineering techniques, and behavioral analysis.
+                        </p>
+                    </div>
+
+                    <div class="text-center scroll-reveal">
+                        <div class="text-4xl mb-4">🔍</div>
+                        <h3 class="text-xl font-bold mb-2">
+                            Threat Intelligence
+                        </h3>
+                        <p class="text-grey-400">
+                            IOC analysis, threat actor profiling, and
+                            intelligence gathering methodologies.
+                        </p>
+                    </div>
+
+                    <div class="text-center scroll-reveal">
+                        <div class="text-4xl mb-4">🔧</div>
+                        <h3 class="text-xl font-bold mb-2">Security Tools</h3>
+                        <p class="text-grey-400">
+                            Custom tool development, automation scripts, and
+                            security workflow optimization.
+                        </p>
+                    </div>
+
+                    <div class="text-center scroll-reveal">
+                        <div class="text-4xl mb-4">🏆</div>
+                        <h3 class="text-xl font-bold mb-2">CTF Writeups</h3>
+                        <p class="text-grey-400">
+                            Competition challenges, solution walkthroughs, and
+                            advanced techniques.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-primary-dark border-t border-grey-800 py-12">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center">
+                    <div
+                        class="font-display text-2xl font-bold text-accent-teal mb-4"
+                    >
+                        Abhay Bhat
+                    </div>
+                    <p class="text-grey-400 mb-6">
+                        Cybersecurity Professional & Threat Researcher
+                    </p>
+                    <div class="flex justify-center space-x-6 mb-8">
+                        <a
+                            href="mailto:abhaybhat0312@gmail.com"
+                            class="text-grey-400 hover:text-accent-teal transition-colors"
+                        >
+                            <svg
+                                class="w-6 h-6"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"
+                                />
+                            </svg>
+                        </a>
+                        <a
+                            href="https://linkedin.com/in/abhay-bhat-893b211b7"
+                            class="text-grey-400 hover:text-accent-teal transition-colors"
+                        >
+                            <svg
+                                class="w-6 h-6"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
+                                />
+                            </svg>
+                        </a>
+                    </div>
+                    <p class="text-sm text-grey-600">
+                        © 2025 Abhay Bhat. All rights reserved.
+                    </p>
+                </div>
+            </div>
+        </footer>
+
+        <script src="main.js"></script>
+        <script>
+            // Initialize scroll reveal
+            document.addEventListener("DOMContentLoaded", function () {
+                const observerOptions = {
+                    threshold: 0.1,
+                    rootMargin: "0px 0px -50px 0px",
+                };
+
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add("revealed");
+                        }
+                    });
+                }, observerOptions);
+
+                document.querySelectorAll(".scroll-reveal").forEach((el) => {
+                    observer.observe(el);
+                });
             });
-        });
-    </script>
-</body>
+        </script>
+    </body>
 </html>

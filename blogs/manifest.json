@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "generated": "2025-10-24T00:00:00Z",
+  "root": "blogs",
+  "blogs": [
+    {
+      "id": "AgentTesla_Analysis",
+      "dir": "AgentTesla_Analysis",
+      "displayName": "AgentTesla Stealer Analysis Part 1",
+      "index": "AgentTesla_Analysis/index.md",
+      "resources": [
+        "agentTesla_string_decryptor.ps1.md",
+        "decrypted_bulk_strings.txt.md",
+        "floss_output.txt.md"
+      ],
+      "assets": ["AgentTesla_Analysis/assets/"],
+      "metadataHint": {
+        "frontmatterPreferred": true,
+        "requiredFields": ["title", "summary", "author", "date"],
+        "parserNotes": "If frontmatter is missing, renderer should try to derive title from the first H1 and look for summary/author/date in a short header block."
+      }
+    }
+  ],
+  "schemaNotes": {
+    "purpose": "List blog directories and their non-index resources so the client-side renderer can build the directory tree and load the blog entry (index).",
+    "pathsAreRelativeTo": "portfolio/blogs/",
+    "conventions": [
+      "Each blog folder's index entry should point to its main page (index.md or index.html).",
+      "'resources' lists files within the blog folder excluding the index file.",
+      "'assets' can contain directories or asset paths to be shown/served as needed."
+    ],
+    "updateGuidance": "When you add a new blog folder, append a new object to 'blogs' with the folder name, index path, and any resource filenames. This manifest is intentionally simple so the renderer can be robust on static hosting."
+  }
+}

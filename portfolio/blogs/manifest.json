@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "generated": "2025-10-25T16:08:25Z",
+  "root": "blogs",
+  "blogs": [
+    {
+      "id": "AgentTesla_Analysis",
+      "dir": "AgentTesla_Analysis",
+      "displayName": "AgentTesla Stealer Analysis Part 1",
+      "index": "AgentTesla_Analysis/index.md",
+      "resources": [
+        "agentTesla_string_decryptor.ps1.md",
+        "decrypted_bulk_strings.txt.md",
+        "floss_output.txt.md"
+      ],
+      "assets": [
+        "assets/"
+      ]
+    }
+  ],
+  "schemaNotes": {
+    "pathsAreRelativeTo": "blogs",
+    "conventions": [
+      "Each blog folder's index entry should point to its main page (index.md or index.html).",
+      "'resources' lists files within the blog folder excluding the index file.",
+      "'assets' lists directories under the blog folder (with trailing slash)."
+    ]
+  }
+}
