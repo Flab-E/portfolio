@@ -418,7 +418,8 @@
       }
       
       if (!relativePath.startsWith('/')) {
-          relativePath = '/blogs/' + relativePath;
+          const blogsPath = new URL(BLOGS_BASE).pathname;
+          relativePath = blogsPath + relativePath;
       }
       const idx = relativePath.lastIndexOf("/");
       if (idx !== -1) srcBase = relativePath.substring(0, idx + 1);
