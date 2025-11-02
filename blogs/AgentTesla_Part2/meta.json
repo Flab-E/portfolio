@@ -1,0 +1,6 @@
+{
+  "title": "AgentTesla Stealer Analysis Part 1",
+  "summary": "Agent Tesla is a widely-used .NET-based infostealer that steals credentials, browser data, clipboard contents, and keystrokes while silently maintaining persistence on infected Windows hosts. In this analysis, I reverse-engineer a recent AgentTesla sample to uncover its behavior, string-decryption logic, anti-analysis techniques, registry manipulations, and persistence methods.",
+  "author": "Abhay Bhat",
+  "date": "2024-10-20"
+}

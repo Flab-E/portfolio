@@ -18,7 +18,7 @@ Conventions:
   If no Markdown files exist, `index` will be set to null in the manifest for that blog.
 - `resources` contains files in the blog folder excluding the index file(s).
 - `assets` lists subdirectories inside the blog folder (trailing slash included).
-- Paths in the manifest are returned relative to the blogs root (e.g. "AgentTesla_Analysis/AgentTesla.md").
+- Paths in the manifest are returned relative to the blogs root (e.g. "AgentTesla_Part1/AgentTesla.md").
 
 The manifest format is intentionally simple and safe for static hosting.
 """

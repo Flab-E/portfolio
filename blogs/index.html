@@ -31,6 +31,10 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         .scroll-reveal {
             opacity: 0;
             transform: translateY(30px);
@@ -315,6 +319,11 @@
             display: list-item;
         }
 
+        .blog-content ol ul,
+        .blog-content ul ul {
+            padding-left: 1.5rem;
+        }
+
         /* Remove bullets for lists with custom arrows */
         .blog-content ul.custom-arrows,
         .blog-content ol.custom-arrows {
@@ -420,6 +429,22 @@
             .blog-viewer {
                 padding: 0.75rem;
             }
+        }
+
+        /* Table of Contents styling */
+        .blog-content a[href^="#"] {
+            color: #14b8a6;
+            text-decoration: none;
+            border-bottom: 1px dotted #14b8a6;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .blog-content a[href^="#"]:hover {
+            border-bottom: 1px solid #14b8a6;
+            background: rgba(20, 184, 166, 0.1);
+            padding: 1px 3px;
+            border-radius: 3px;
         }
     </style>
 
@@ -591,92 +616,21 @@
             if (mobileMenuBtn) {
                 mobileMenuBtn.addEventListener('click', () => {
                     // Add mobile menu functionality if needed
-                    console.log('Mobile menu clicked');
+                    // console.log('Mobile menu clicked');
                 });
             }
         }
 
-        // Blog reader URL parameter handling
-        (function () {
-            function getIdFromFileParam(fp) {
-                try {
-                    const pathname = new URL(fp, location.href).pathname;
-                    let p = pathname.replace(/\/$/, '');
-                    p = p.replace(/\/(index\.(md|html?|htm))$/i, '');
-                    const parts = p.split('/');
-                    return parts[parts.length - 1] || null;
-                } catch (e) {
-                    let s = String(fp).split('?')[0].split('#')[0];
-                    s = s.replace(/\/$/, '');
-                    s = s.replace(/\/(index\.(md|html?|htm))$/i, '');
-                    const parts = s.split('/');
-                    return parts[parts.length - 1] || null;
-                }
-            }
-
-            function tryOpenFromQueryOrHash() {
-                const params = new URLSearchParams(location.search);
-                const fileParamRaw = params.get('file');
-                let fileParam = fileParamRaw ? String(fileParamRaw).trim() : null;
-                let raw = null;
-                let id = null;
-
-                if (fileParam) {
-                    raw = decodeURIComponent(fileParam);
-                    id = getIdFromFileParam(raw) || raw.split('/').pop() || raw;
-                } else if (location.hash) {
-                    raw = decodeURIComponent(location.hash.slice(1)).trim();
-                    if (!raw) return;
-                    id = raw.split('/').pop() || raw;
-                } else {
-                    return;
-                }
-
-                const start = Date.now();
-                (function poll() {
-                    if (window.openBlogById && typeof window.openBlogById === 'function') {
-                        try {
-                            if (id && window.openBlogById(id)) {
-                                return;
-                            }
-                            if (raw && window.openBlogById(raw)) {
-                                return;
-                            }
-                        } catch (e) {
-                            console.warn('openBlogById threw', e);
-                        }
-                        return;
-                    }
-
-                    if (Date.now() - start > 3000) {
-                        try {
-                            if (fileParam) {
-                                if (id) location.hash = id;
-                                else if (raw) location.hash = raw;
-                            }
-                        } catch (e) {
-                            // ignore
-                        }
-                        return;
-                    }
-
-                    setTimeout(poll, 100);
-                })();
-            }
-
-            // Initialize when DOM is ready
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', () => {
-                    initializeScrollReveal();
-                    initializeMobileMenu();
-                    tryOpenFromQueryOrHash();
-                });
-            } else {
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
                 initializeScrollReveal();
                 initializeMobileMenu();
-                tryOpenFromQueryOrHash();
-            }
-        })();
+            });
+        } else {
+            initializeScrollReveal();
+            initializeMobileMenu();
+        }
     </script>
 </body>
 </html>

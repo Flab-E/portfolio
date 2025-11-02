@@ -1,34 +1,41 @@
 {
   "version": 1,
-  "generated": "2025-10-24T00:00:00Z",
+  "generated": "2025-11-02T16:14:27Z",
   "root": "blogs",
   "blogs": [
     {
-      "id": "AgentTesla_Analysis",
-      "dir": "AgentTesla_Analysis",
+      "id": "AgentTesla_Part1",
+      "dir": "AgentTesla_Part1",
       "displayName": "AgentTesla Stealer Analysis Part 1",
-      "index": "AgentTesla_Analysis/index.md",
+      "index": "AgentTesla_Part1/index.md",
       "resources": [
         "agentTesla_string_decryptor.ps1.md",
         "decrypted_bulk_strings.txt.md",
         "floss_output.txt.md"
       ],
-      "assets": ["AgentTesla_Analysis/assets/"],
-      "metadataHint": {
-        "frontmatterPreferred": true,
-        "requiredFields": ["title", "summary", "author", "date"],
-        "parserNotes": "If frontmatter is missing, renderer should try to derive title from the first H1 and look for summary/author/date in a short header block."
-      }
+      "assets": [
+        "assets/"
+      ]
+    },
+    {
+      "id": "AgentTesla_Part2",
+      "dir": "AgentTesla_Part2",
+      "displayName": "AgentTesla Stealer Analysis Part 2",
+      "index": "AgentTesla_Part2/index.md",
+      "resources": [
+        "ProcessHollowing.md"
+      ],
+      "assets": [
+        "assets/"
+      ]
     }
   ],
   "schemaNotes": {
-    "purpose": "List blog directories and their non-index resources so the client-side renderer can build the directory tree and load the blog entry (index).",
-    "pathsAreRelativeTo": "portfolio/blogs/",
+    "pathsAreRelativeTo": "portfolio/blogs",
     "conventions": [
       "Each blog folder's index entry should point to its main page (index.md or index.html).",
       "'resources' lists files within the blog folder excluding the index file.",
-      "'assets' can contain directories or asset paths to be shown/served as needed."
-    ],
-    "updateGuidance": "When you add a new blog folder, append a new object to 'blogs' with the folder name, index path, and any resource filenames. This manifest is intentionally simple so the renderer can be robust on static hosting."
+      "'assets' lists directories under the blog folder (with trailing slash)."
+    ]
   }
 }

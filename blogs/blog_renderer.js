@@ -306,6 +306,97 @@
     return null;
   }
 
+  function renderToc(tocMarkdown) {
+    if (!tocMarkdown) return '';
+
+    const lines = tocMarkdown.split('\n');
+    let html = '';
+    let indentLevel = 0;
+
+    for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed) continue;
+
+        const indentMatch = line.match(/^(\s*)/);
+        const indent = indentMatch ? indentMatch[1].length : 0;
+
+        if (trimmed.startsWith('1.')) { // Start of the main list
+            if (indentLevel > 0) {
+                html += '</ul></li>'.repeat(indentLevel);
+            }
+            html += '<ol>';
+            indentLevel = 0;
+        }
+
+        const level = Math.floor(indent / 2);
+
+        if (level > indentLevel) {
+            html += '<ul>';
+        } else if (level < indentLevel) {
+            html += '</li></ul>';
+        }
+
+        if (trimmed.match(/^[0-9]+\./)) { // Main list item
+            html += `<li>${trimmed.substring(trimmed.indexOf(' ') + 1)}`;
+        } else if (trimmed.startsWith('*') || trimmed.startsWith('-')) { // Sub-list item
+            html += `<li>${trimmed.substring(2)}</li>`;
+        }
+
+        indentLevel = level;
+    }
+
+    // Close any remaining tags
+    while (indentLevel > 0) {
+        html += '</li></ul>';
+        indentLevel--;
+    }
+    if (html.startsWith('<ol>')) {
+        html += '</li></ol>';
+    }
+
+    return html;
+  }
+
+  function renderToc(tocMarkdown) {
+    if (!tocMarkdown) return '';
+    const lines = tocMarkdown.split('\n');
+    let html = '';
+    let level = -1;
+
+    for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith('##')) continue;
+
+        const indentMatch = line.match(/^(\s*)/);
+        const indent = indentMatch ? indentMatch[1].length : 0;
+        const newLevel = Math.floor(indent / 2);
+
+        const itemMatch = trimmed.match(/^(?:[0-9]+\.|[-*+])\s+(.*)/);
+        if (!itemMatch) continue;
+        const itemText = itemMatch[1];
+
+        const listTag = /^[0-9]/.test(trimmed) ? 'ol' : 'ul';
+
+        if (newLevel > level) {
+            html += `<${listTag}>`;
+        } else if (newLevel < level) {
+            html += '</li>'.repeat(level - newLevel);
+            html += `</${/^[0-9]/.test(lines[lines.indexOf(line)-1].trim()) ? 'ol' : 'ul'}></li>`;
+        }
+
+        html += `<li>${itemText}`;
+        level = newLevel;
+    }
+
+    while (level >= 0) {
+        html += '</li>';
+        level--;
+    }
+    html += '</ol>';
+
+    return html;
+  }
+
   // Renderers
   async function renderMarkdownIntoViewer(md, srcPath) {
     const viewer = document.getElementById(VIEWER_ID);
@@ -325,13 +416,12 @@
           relativePath = srcPath;
         }
       }
+      
+      if (!relativePath.startsWith('/')) {
+          relativePath = '/blogs/' + relativePath;
+      }
       const idx = relativePath.lastIndexOf("/");
       if (idx !== -1) srcBase = relativePath.substring(0, idx + 1);
-
-      // Ensure srcBase is relative to site root (starts with /)
-      if (srcBase && !srcBase.startsWith("/")) {
-        srcBase = "/" + srcBase;
-      }
     }
 
     // Helper that resolves a relative reference against the markdown source
@@ -392,62 +482,18 @@
       const out = [];
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
-        // If this line contains a preserved code-block placeholder, leave it untouched
-        if (line.indexOf(__CODE_PLACEHOLDER) !== -1) {
-          out.push(line);
-          continue;
+        
+        const listMatch = line.match(/^(\s*)((?:[0-9]+\.|[-*+])\s+.*)/);
+        if (listMatch) {
+            const indent = listMatch[1].length;
+            const restOfLine = listMatch[2];
+            const newIndent = " ".repeat(Math.floor(indent / 2) * 4); // Normalize to 4 spaces
+            out.push(newIndent + restOfLine);
+            continue;
         }
 
-        // Match leading arrow list markers (->, =>) or their Unicode equivalents (→, ⇒)
-        // Also support optional blockquote prefix(es) like '> ' or '>> ' and preserve them.
-        // Capture groups:
-        //   1 = leading indentation (spaces/tabs)
-        //   2 = optional blockquote prefix (one or more '>' plus trailing spaces)
-        //   3 = the rest of the list item text after the arrow marker
-        const arrowMatch = line.match(
-          /^([ \t]*)(>{1,}[ \t]*)?(?:->|=>|⇒|→)[ \t]*(.*)$/,
-        );
-        if (arrowMatch) {
-          // Clamp indentation to at most 3 spaces so we don't accidentally create code blocks
-          let indent = (arrowMatch[1] || "").replace(/\t/g, "    ");
-          if (indent.length > 3) indent = indent.slice(0, 3);
-
-          // Preserve any blockquote prefix detected (e.g., '> ' or '>> ')
-          const quotePrefix = arrowMatch[2] || "";
-
-          // Detect arrow type and create special marker
-          const originalLine = line.trim();
-          const isDoubleArrow =
-            originalLine.startsWith("=>") || originalLine.startsWith("⇒");
-          const arrowMarker = isDoubleArrow ? "DOUBLEARROW" : "SINGLEARROW";
-
-          // Ensure a blank line before a list block when the previous output line is non-empty
-          if (out.length && out[out.length - 1].trim() !== "") out.push("");
-
-          // Emit the canonical markdown list item with special marker preserved
-          out.push(
-            indent +
-              quotePrefix +
-              "- " +
-              arrowMarker +
-              " " +
-              (arrowMatch[3] || ""),
-          );
-          continue;
-        }
-
-        // Also handle cases where existing Markdown list markers are indented 4+ spaces
-        // (these would otherwise turn into code blocks). Reduce them to 3 spaces.
-        const overIndentedList = line.match(/^([ \t]{4,})([-*+]\s+.*)$/);
-        if (overIndentedList) {
-          out.push("   " + overIndentedList[2]);
-          continue;
-        }
-
-        // Default: keep the line as-is
         out.push(line);
       }
-
       temp = out.join("\n");
     })();
 
@@ -483,7 +529,8 @@
       ) {
         console.debug(
           "Blog renderer - transformed markdown (truncated):",
-          pre.slice(0, 2000),
+          // pre.slice(0, 2000),
+          "..."
         );
       }
     } catch (e) {
@@ -702,42 +749,161 @@
 
       // Handle custom bullet points and distinguish from regular lists (moved to end)
 
-      // Post-process links for navigation
-      try {
-        viewer.querySelectorAll("a[href]").forEach((linkEl) => {
-          const href = linkEl.getAttribute("href");
+      // Use document-level event delegation for more reliable anchor handling
+      if (!document._blogAnchorHandler) {
+        document._blogAnchorHandler = (e) => {
+          const linkEl = e.target.closest("a");
+          if (!linkEl) return;
+
+          // Only handle links inside the blog viewer
+          if (!viewer.contains(linkEl)) return;
+
+          const href =
+            linkEl.getAttribute("href") ||
+            linkEl.getAttribute("data-original-href");
           if (!href) return;
 
           if (href.startsWith("#")) {
             // Handle anchor links for table of contents
-            linkEl.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            const targetId = href.slice(1);
+            const targetElement = viewer.querySelector(
+              `#${targetId}, [id="${targetId}"]`,
+            );
+            if (targetElement) {
+              // Add smooth scroll behavior to html element if not already set
+              if (!document.documentElement.style.scrollBehavior) {
+                document.documentElement.style.scrollBehavior = "smooth";
+              }
+
+              // Calculate offset to account for fixed header
+              const headerHeight = 80; // Approximate height of fixed nav
+              const elementPosition = targetElement.getBoundingClientRect().top;
+              const offsetPosition =
+                elementPosition + window.pageYOffset - headerHeight;
+
+              // Use window.scrollTo for better cross-browser support
+              window.scrollTo({
+                top: offsetPosition,
+                behavior: "smooth",
+              });
+
+              // Fallback for browsers that don't support smooth scrolling
+              setTimeout(() => {
+                if (Math.abs(window.pageYOffset - offsetPosition) > 10) {
+                  targetElement.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                  });
+                }
+              }, 100);
+            }
+            return false;
+          } else if (!href.startsWith("http") && !href.startsWith("/")) {
+            // This is a relative internal link - check if it matches a blog resource
+            e.preventDefault();
+            handleInternalLinkClick(href);
+          }
+        };
+        document.addEventListener("click", document._blogAnchorHandler, true);
+      }
+
+      // Post-process links - completely replace anchor links with span elements
+      setTimeout(() => {
+        try {
+          // First, check for any links with hashes in their URLs and convert them to relative anchors
+          const allLinksWithHash = viewer.querySelectorAll("a[href*='#']");
+          allLinksWithHash.forEach((link) => {
+            const href = link.getAttribute("href");
+            if (href && href.includes("#")) {
+              // If this is a full URL pointing to this page with a hash, convert to relative anchor
+              const hashIndex = href.lastIndexOf("#");
+              if (hashIndex > -1) {
+                const hashPart = href.substring(hashIndex);
+                // Only convert if it's not already a relative anchor
+                if (!href.startsWith("#")) {
+                  link.setAttribute("href", hashPart);
+                }
+              }
+            }
+          });
+
+          // Now find all anchor links (including newly converted ones)
+          const anchorLinks = viewer.querySelectorAll("a[href^='#']");
+
+          anchorLinks.forEach((linkEl) => {
+            const href = linkEl.getAttribute("href");
+            const targetId = href.slice(1);
+
+            // Create a span element to replace the anchor
+            const spanEl = document.createElement("span");
+            spanEl.innerHTML = linkEl.innerHTML;
+            spanEl.style.cursor = "pointer";
+            spanEl.style.color = "#14b8a6";
+            spanEl.style.textDecoration = "none";
+            spanEl.style.borderBottom = "1px dotted #14b8a6";
+            spanEl.style.transition = "all 0.2s ease";
+            spanEl.setAttribute("data-target-id", targetId);
+
+            // Add hover effect
+            spanEl.addEventListener("mouseenter", () => {
+              spanEl.style.borderBottom = "1px solid #14b8a6";
+              spanEl.style.background = "rgba(20, 184, 166, 0.1)";
+              spanEl.style.padding = "1px 3px";
+              spanEl.style.borderRadius = "3px";
+            });
+            spanEl.addEventListener("mouseleave", () => {
+              spanEl.style.borderBottom = "1px dotted #14b8a6";
+              spanEl.style.background = "transparent";
+              spanEl.style.padding = "0";
+              spanEl.style.borderRadius = "0";
+            });
+
+            // Add click handler for scrolling
+            spanEl.addEventListener("click", (e) => {
               e.preventDefault();
-              const targetId = href.slice(1);
+              e.stopPropagation();
+
               const targetElement = viewer.querySelector(
                 `#${targetId}, [id="${targetId}"]`,
               );
+
               if (targetElement) {
-                // Scroll to element using window scroll since viewer is no longer constrained
-                targetElement.scrollIntoView({
+                const headerHeight = 80;
+                const elementPosition =
+                  targetElement.getBoundingClientRect().top;
+                const offsetPosition =
+                  elementPosition + window.pageYOffset - headerHeight;
+
+                window.scrollTo({
+                  top: offsetPosition,
                   behavior: "smooth",
-                  block: "start",
                 });
               }
             });
-          } else if (!href.startsWith("http") && !href.startsWith("/")) {
-            // This is a relative internal link - check if it matches a blog resource
-            linkEl.addEventListener("click", (e) => {
-              e.preventDefault();
-              handleInternalLinkClick(href);
-            });
-            // Add CSS class and attributes for internal link styling
-            linkEl.classList.add("internal-link");
-            linkEl.title = "Click to view resource";
-          }
-        });
-      } catch (e) {
-        // ignore link processing failures
-      }
+
+            // Replace the anchor with the span
+            linkEl.parentNode.replaceChild(spanEl, linkEl);
+          });
+
+          // Style other internal links
+          viewer.querySelectorAll("a[href]").forEach((linkEl) => {
+            const href = linkEl.getAttribute("href");
+            if (
+              !href.startsWith("http") &&
+              !href.startsWith("/") &&
+              !href.startsWith("#")
+            ) {
+              linkEl.classList.add("internal-link");
+              linkEl.title = "Click to view resource";
+            }
+          });
+        } catch (e) {
+          // ignore link processing failures
+        }
+      }, 100);
 
       // Handle custom bullet points by looking for arrow patterns in HTML content
       try {
@@ -863,6 +1029,7 @@
 
   // Load and render a given path (absolute or relative)
   async function loadAndRender(path, options = { updateMeta: false }) {
+    // console.log("DEBUG: loadAndRender called with path:", path);
     const viewer = document.getElementById(VIEWER_ID);
     if (!viewer) return;
     try {
@@ -1196,7 +1363,7 @@
 
   // Expose a small helper so other pages/scripts can open a blog by id.
   // This relies on folder buttons carrying `data-blog-id` (set above).
-  // Usage: window.openBlogById('AgentTesla_Analysis')
+  // Usage: window.openBlogById('AgentTesla_Part1')
   window.openBlogById = function (id) {
     if (!id) return false;
     try {
@@ -1233,7 +1400,7 @@
   // Expose helper to open a file directly (absolute URL or path relative to BLOGS_BASE).
   // Enhanced: when passed a directory or a path without an extension, try common index files
   // (index.md, index.html) and prefer the first one that actually exists.
-  // Usage: window.openBlogByFile('/blogs/AgentTesla_Analysis/index.md') or window.openBlogByFile('blogs/AgentTesla_Analysis')
+  // Usage: window.openBlogByFile('/blogs/AgentTesla_Part1/index.md') or window.openBlogByFile('blogs/AgentTesla_Part1')
   window.openBlogByFile = async function (fileUrl) {
     if (!fileUrl) return false;
     try {
@@ -1598,35 +1765,56 @@
         // ignore if environment disallows assigning to window
       }
 
-      // auto-open first blog if present
-      const first = manifest.blogs && manifest.blogs[0];
-      if (first) {
-        const firstBtn = treeContainer.querySelector(".blog-node button");
-        if (firstBtn) firstBtn.click();
+      const params = new URLSearchParams(location.search);
+      const fileParam = params.get('file');
+      const hash = location.hash.slice(1);
+
+      let handled = false;
+
+      if (fileParam) {
+          let path = decodeURIComponent(fileParam);
+          if (path.startsWith('blogs/')) {
+              path = path.substring('blogs/'.length);
+          }
+          // Find the blog entry that matches this file path to get metadata
+          const blog = manifest.blogs.find(b => path.includes(b.dir));
+          if (blog) {
+              await loadAndRender(path, {
+                  updateMeta: true,
+                  blogDir: blog.dir,
+                  blogDisplayName: blog.displayName || blog.dir.replace(/_/g, " ")
+              });
+              const btn = treeContainer.querySelector(`button[data-blog-id="${blog.id}"]`);
+              if (btn) {
+                  updateTreeSelection(treeContainer, btn);
+                  // Also expand the resources
+                  renderResources(blog, btn.nextElementSibling, blog.dir);
+              }
+              handled = true;
+          } else {
+              // Fallback for files not in a blog dir
+              await loadAndRender(path, { updateMeta: true });
+              handled = true;
+          }
+      } else if (hash) {
+          const id = decodeURIComponent(hash);
+          const blog = manifest.blogs.find(b => b.id === id || b.dir === id);
+          if (blog) {
+              const btn = treeContainer.querySelector(`button[data-blog-id="${blog.id}"]`);
+              if (btn) {
+                  btn.click();
+                  handled = true;
+              }
+          }
       }
 
-      // handle initial hash
-      if (location.hash) {
-        const raw = decodeURIComponent(location.hash.replace("#", "")).trim();
-        if (raw) {
-          let targetUrl = null;
-          // If the fragment already looks like a path (contains a slash or an extension), use it as a file/path
-          if (raw.includes("/") || /\.\w+$/.test(raw)) {
-            targetUrl = raw.includes("/") ? raw : BLOGS_BASE + raw;
-          } else {
-            // Try to resolve as a blog id using the loaded manifest
-            const idx = findIndexPathForBlog(manifest, raw);
-            if (idx) {
-              targetUrl = idx;
-            } else {
-              // fallback: treat as a file under BLOGS_BASE
-              targetUrl = BLOGS_BASE + raw;
-            }
+      if (!handled) {
+          // auto-open first blog
+          const first = manifest.blogs && manifest.blogs[0];
+          if (first) {
+            const firstBtn = treeContainer.querySelector(".blog-node button");
+            if (firstBtn) firstBtn.click();
           }
-          if (targetUrl) {
-            await loadAndRender(targetUrl, { updateMeta: true });
-          }
-        }
       }
     } catch (err) {
       treeContainer.innerHTML = `<div class="text-red-400">Failed to load blog manifest: ${escapeHtml(String((err && err.message) || err))}</div>`;

@@ -303,17 +303,17 @@ foreach ($i in $Inputs) {
 
 ---
 
-Conclusion
+## Conclusion
 
 This AgentTesla sample demonstrates typical characteristics of .NET-based information stealers:
 
-Obfuscation: Encrypted strings hide malicious logic and endpoints.
+**Obfuscation:** Encrypted strings hide malicious logic and endpoints.
 
-Capabilities: Keylogging, screenshot/webcam capture, clipboard monitoring, file manipulation, and persistence.
+**Capabilities:** Keylogging, screenshot/webcam capture, clipboard monitoring, file manipulation, and persistence.
 
-Anti-analysis: Periodic AV/tool checks; registry and UI modifications to hinder detection and recovery.
+**Anti-analysis:** Periodic AV/tool checks; registry and UI modifications to hinder detection and recovery.
 
-Persistence: Registry run key JavaUpdtr and placement under %appdata%\Java\.
+**Persistence:** Registry run key JavaUpdtr and placement under %appdata%\Java\.
 
 
-The sample is consistent with a mature infostealer designed for stealth and data exfiltration rather than destructive operations. The use of a .NET runtime with AES/base64 string obfuscation indicates a well-developed tooling and deployment pipeline.
+-> The sample is consistent with a mature infostealer designed for stealth and data exfiltration rather than destructive operations. The use of a .NET runtime with AES/base64 string obfuscation indicates a well-developed tooling and deployment pipeline.
